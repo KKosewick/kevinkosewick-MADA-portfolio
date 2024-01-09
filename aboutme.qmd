@@ -1,7 +1,31 @@
 ---
 title: "About me"
+
 ---
 
-Add some text and a figure describing myself.
+![Me holding a corn snake at the Savannah River Site Ecology Lab. They're friendly but a bit freaky!](IMG_1434_Original.jpeg){width=230}
 
-For details, see the exercise instructions. 
+## Background
+
+### Education
+I completed my Bachelors in Wildlife Sciences at Mississippi State University in May of 2023. I entered the ILS program at UGA the following August and have since matriculated into the EHS program as a first year in Erin Lipp's lab.
+
+### Hometown
+I was born in Orange, CA and raised in Collierville, TN outside of Memphis. My parents and 5 pets (3 cats and 2 dogs) still live there!
+
+### Fun Fact
+During field research on pollinators at my undergraduate university, I was stung about 5 times by a swarm of yellowjackets that I apparently offended! I couldn't move one of my fingers for three days.
+
+## Research Interests/Experience
+
+### Current Research
+I don't have my own project yet, but I'm interested in pursuing research on bacterial pathogens and environmental epidemiology. I would love to include a wildlife aspect!
+
+### Experience
+I have taken some basic statistics courses and an overview of data analysis using R. I don't know any coding languages, but I can navigate RStudio and make some basic plots and analyses.
+
+### Hopes for the class
+I hope to become proficient in making my data usable for analysis and to learn more about creating a workflow that allows for reproducibility.
+
+### Interesting Data Analysis Facts
+[**This website**](https://codinghero.ai/interesting-facts-about-data-science/) has some fun facts about data analysis. I found it interesting that 80% of a data scientist's time is spent cleaning the data!
