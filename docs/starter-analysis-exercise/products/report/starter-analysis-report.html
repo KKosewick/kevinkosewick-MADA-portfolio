@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Your Name">
-<meta name="dcterms.date" content="2024-01-09">
+<meta name="author" content="Kevin Kosewick">
+<meta name="dcterms.date" content="2024-01-19">
 
-<title>YOURNAME Data Analysis Portfolio - Manuscript/Report Template for a Data Analysis Project</title>
+<title>Kevin Kosewick’s Data Analysis Portfolio - Manuscript/Report Template for a Data Analysis Project</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -57,10 +57,10 @@ div.csl-indent {
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -101,7 +101,7 @@ div.csl-indent {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../../index.html">
-    <span class="navbar-title">YOURNAME Data Analysis Portfolio</span>
+    <span class="navbar-title">Kevin Kosewick’s Data Analysis Portfolio</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -140,7 +140,7 @@ div.csl-indent {
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="../../../URL-TO-THIS-REPOSITORY-HERE"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/KKosewick/kevinkosewick-MADA-portfolio"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -171,14 +171,14 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Your Name </p>
+             <p>Kevin Kosewick </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 9, 2024</p>
+      <p class="date">January 19, 2024</p>
     </div>
   </div>
   
@@ -190,6 +190,7 @@ div.csl-indent {
 </header>
 
 
+<p>EMMA HARDIN-PARKER contributed to this exercise.</p>
 <p>The structure below is one possible setup for a data analysis project (including the course project). For a manuscript, adjust as needed. You don’t need to have exactly these sections, but the content covering those sections should be addressed.</p>
 <p>This uses MS Word as output format. <a href="https://quarto.org/docs/output-formats/ms-word.html">See here</a> for more information. You can switch to other formats, like html or pdf. See <a href="https://quarto.org/">the Quarto documentation</a> for other formats.</p>
 <div class="cell">
@@ -254,21 +255,26 @@ Table&nbsp;1: Data summary table.
 <div class="cell-output-display">
 <table class="do-not-create-environment cell table table-sm table-striped small">
 <colgroup>
+<col style="width: 3%">
 <col style="width: 5%">
+<col style="width: 3%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
 <col style="width: 7%">
 <col style="width: 5%">
-<col style="width: 7%">
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 9%">
-<col style="width: 6%">
-<col style="width: 5%">
 <col style="width: 5%">
 <col style="width: 6%">
-<col style="width: 6%">
-<col style="width: 6%">
-<col style="width: 6%">
-<col style="width: 6%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 4%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -276,6 +282,11 @@ Table&nbsp;1: Data summary table.
 <th style="text-align: left;">skim_variable</th>
 <th style="text-align: right;">n_missing</th>
 <th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">character.min</th>
+<th style="text-align: right;">character.max</th>
+<th style="text-align: right;">character.empty</th>
+<th style="text-align: right;">character.n_unique</th>
+<th style="text-align: right;">character.whitespace</th>
 <th style="text-align: left;">factor.ordered</th>
 <th style="text-align: right;">factor.n_unique</th>
 <th style="text-align: left;">factor.top_counts</th>
@@ -291,10 +302,37 @@ Table&nbsp;1: Data summary table.
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">Hair Color</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">factor</td>
 <td style="text-align: left;">Gender</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: left;">M: 4, F: 3, O: 2</td>
@@ -307,11 +345,16 @@ Table&nbsp;1: Data summary table.
 <td style="text-align: right;">NA</td>
 <td style="text-align: left;">NA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">numeric</td>
 <td style="text-align: left;">Height</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: left;">NA</td>
@@ -324,11 +367,16 @@ Table&nbsp;1: Data summary table.
 <td style="text-align: right;">183</td>
 <td style="text-align: left;">▂▁▃▃▇</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">numeric</td>
 <td style="text-align: left;">Weight</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
 <td style="text-align: left;">NA</td>
 <td style="text-align: right;">NA</td>
 <td style="text-align: left;">NA</td>
@@ -340,6 +388,28 @@ Table&nbsp;1: Data summary table.
 <td style="text-align: right;">80</td>
 <td style="text-align: right;">110</td>
 <td style="text-align: left;">▇▂▃▂▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">Strands of Hair</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">5592.11111</td>
+<td style="text-align: right;">3533.51456</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5000</td>
+<td style="text-align: right;">6000</td>
+<td style="text-align: right;">8178</td>
+<td style="text-align: right;">9122</td>
+<td style="text-align: left;">▃▁▃▂▇</td>
 </tr>
 </tbody>
 </table>
@@ -362,6 +432,36 @@ Table&nbsp;1: Data summary table.
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-result-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Height and weight stratified by gender.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-result2" class="quarto-xref">Figure&nbsp;2</a> shows a box plot giving the distributions of “Height” and “Hair Color” made from R. Black haired individuals tend to average about 173 cm. with a max of 180 cm. and a low of 162. Brown haired individuals average about 166 cm. with a max of 176 and low of 154. Red haired individuals average about 166 cm. with a max of 171 and low of 151. There is no distribution for purple and white due to there being only one individual for each.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-result2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-result2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../../results/figures/height-color-box.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-result2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: A box plot of Height (cm) and Hair Color.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><a href="#fig-result3" class="quarto-xref">Figure&nbsp;3</a> shows a scatter plot showing the correlation between “Weight” and “Strands of Hair” made from R. It turns out that there is no correlation between these two variables.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-result3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-result3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../../results/figures/weight-strands-scatter.png" class="img-fluid figure-img" width="1050">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-result3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: A scatter plot showing Weight (lbs) and Strands of Hair.
 </figcaption>
 </figure>
 </div>
@@ -418,6 +518,75 @@ Table&nbsp;2: Linear model fit table.
 <td style="text-align: right;">19.0114155</td>
 <td style="text-align: right;">-0.2506112</td>
 <td style="text-align: right;">0.8120871</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>Example <a href="#tbl-resulttable3" class="quarto-xref">Table&nbsp;3</a> shows a silly linear model fit of “Hair Color” and “Strands of Hair” as predictors for “Height”. The small sample size makes drawing any accurate conclusions difficult.</p>
+<div class="cell">
+<div id="tbl-resulttable3" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-resulttable3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Linear model fit table of Hair Color and Strands of Hair as predictors for Height.
+</figcaption>
+<div aria-describedby="tbl-resulttable3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">term</th>
+<th style="text-align: right;">estimate</th>
+<th style="text-align: right;">std.error</th>
+<th style="text-align: right;">statistic</th>
+<th style="text-align: right;">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">(Intercept)</td>
+<td style="text-align: right;">176.7015914</td>
+<td style="text-align: right;">11.9719368</td>
+<td style="text-align: right;">14.7596495</td>
+<td style="text-align: right;">0.0006747</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Hair Color</code>BR</td>
+<td style="text-align: right;">-3.4262889</td>
+<td style="text-align: right;">14.0614015</td>
+<td style="text-align: right;">-0.2436662</td>
+<td style="text-align: right;">0.8232017</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>Hair Color</code>P</td>
+<td style="text-align: right;">13.5369154</td>
+<td style="text-align: right;">17.6933112</td>
+<td style="text-align: right;">0.7650866</td>
+<td style="text-align: right;">0.4999000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Hair Color</code>R</td>
+<td style="text-align: right;">-8.9391056</td>
+<td style="text-align: right;">13.5302875</td>
+<td style="text-align: right;">-0.6606737</td>
+<td style="text-align: right;">0.5560240</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>Hair Color</code>W</td>
+<td style="text-align: right;">-39.1558092</td>
+<td style="text-align: right;">16.2731172</td>
+<td style="text-align: right;">-2.4061653</td>
+<td style="text-align: right;">0.0953447</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Strands of Hair</code></td>
+<td style="text-align: right;">-0.0009048</td>
+<td style="text-align: right;">0.0018297</td>
+<td style="text-align: right;">-0.4945259</td>
+<td style="text-align: right;">0.6548825</td>
 </tr>
 </tbody>
 </table>
