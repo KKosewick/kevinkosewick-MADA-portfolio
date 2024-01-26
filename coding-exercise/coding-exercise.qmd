@@ -115,39 +115,51 @@ Based off of the results from the fit, we can see that infant mortality is a sta
 
 
 
-#This section contributed by Cory Cribb
+This section contributed by Cory Cribb
 
-#Loading dslabs dataset "murders"
-#probably a more morbid data set but interesting to observe nonetheless
+Loading dslabs dataset "murders". Probably a more morbid data set but interesting to observe nonetheless.
+
+```{r}
 library(dslabs)
 help(murders)
 str(murders)
 summary(murders)
+```
 
-#Since I am originally from the Southern region of the US; lets explore murders in that region
+Since I am originally from the Southern region of the US; lets explore murders in that region.
+
+```{r}
 South_Murders <- murders[murders$region== "South", ]
 str(South_Murders)
 summary(South_Murders)
+```
 
-#From this data set, it would appear the researchers classified 17 states as being in the Southern region
-#Let's explore if population size had any relationship to gun murders
+From this data set, it would appear the researchers classified 17 states as being in the Southern region.
+Let's explore if population size had any relationship to gun murders.
+
+```{r}
 Pop_and_murder <- South_Murders[, c("total", "population")]
 str(Pop_and_murder)
 summary(Pop_and_murder)
+```
 
-#create a scatter plot viewing total gun murders on the x-axis and state population on the y-axis to observe a trend
-#add a best fit line to the plot to see if there is a trend
+Create a scatter plot viewing total gun murders on the x-axis and state population on the y-axis to observe a trend.
+Add a best fit line to the plot to see if there is a trend.
+
+```{r}
 attach(South_Murders)
 plot(total,population, main= "Total gun murders vs. population size", xlab="Total gun murders", ylab="population")
 abline(lm(population~total))
+```
 
-#From a quick view of the plot, we see that there appears to be a postive correlation that there are more gun murders
-#in states with higher populations
-#lets run a linear model to see if the data gives a statistically significant observation
+From a quick view of the plot, we see that there appears to be a positive correlation that there are more gun murders in states with higher populations. Let's run a linear model to see if the data gives a statistically significant observation.
+
+```{r}
 fit3 <- lm(population~total, South_Murders)
 summary(fit3)
+```
 
-#From the simple linear regression, we see that the slope is statistically significant
-#The adjusted R-squared is 0.9152 which would indicated a Strong, Positive correlation in total gun murders per
-#Gross Population size in the Southern Region of the United States of America
+From the simple linear regression, we see that the slope is statistically significant.
+The adjusted R-squared is 0.9152 which would indicated a Strong, Positive correlation in total gun murders per
+Gross Population size in the Southern Region of the United States of America.
 
