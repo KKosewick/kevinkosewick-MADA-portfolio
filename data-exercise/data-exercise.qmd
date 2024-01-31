@@ -1,0 +1,296 @@
+---
+title: "Data Exercise"
+---
+
+For this exercise, we will generate a synthetic data set that simulates foraging trends of the Northern Mockingbird somewhere in the United States. We will then generate some figures and statistical analyses to explore our new data set. I'll be using Microsoft Edge AI tools to help generate code. Let's begin by loading helpful packages for creating synthetic data sets.
+
+```{r}
+# make sure the packages are installed
+# Load required packages
+library(dplyr)
+library(purrr)
+library(lubridate)
+library(ggplot2)
+library(here)
+library(tidyverse)
+```
+
+I've entered this prompt into Microsoft Edge copilot: 
+"Write R code that creates data for N=100 Northern Mockingbirds. Individuals ages are randomly distributed between 1 and 14 years. Assume that individuals forage for two types of food: insects and plants. Individuals can consume a combination of either food type at an average of half an ounce daily. Food consumption is measured in ounces every other day. Assume that insects are more plentiful in warmer seasons; this should be reflected in the amount of each food type consumed in each season. The data should be collected over the course of a year.
+
+Create a data frame that contains Food Type, Age, Daily Food Consumption (in ounces), Season, and Sex.
+
+For function calls, specify explicitly the package from which the function comes from.
+
+Add thorough documentation to the code so it is clear what each line of code does."
+
+This generated the following code:
+
+```{r}
+# Set the seed for reproducibility
+set.seed(123)
+
+# Define the number of birds
+N <- 100
+
+# Generate random ages between 1 and 14 years
+age <- sample(1:14, N, replace = TRUE)
+
+# Define the two types of food
+food_type <- c("insects", "plants")
+
+# Define the average daily food consumption in ounces
+food_consumption <- 0.5
+
+# Define the seasons
+seasons <- c("spring", "summer", "fall", "winter")
+
+# Define the proportion of insects consumed in each season
+insect_proportion <- c(0.6, 0.8, 0.4, 0.2)
+
+# Define the sex
+sex <- sample(c("male", "female"), N, replace = TRUE)
+
+# Generate the data
+data <- tibble(
+  Food_Type = rep(food_type, each = N/2),
+  Age = age,
+  Daily_Food_Consumption = rnorm(N, food_consumption, 0.1),
+  Season = rep(seasons, each = N/4),
+  Sex = sex
+)
+
+# Adjust the food consumption based on the season
+data$Daily_Food_Consumption[data$Food_Type == "insects"] <- 
+  data$Daily_Food_Consumption[data$Food_Type == "insects"] * 
+  rep(insect_proportion, each = N/2)[data$Season[data$Food_Type == "insects"]]
+
+# Print the data
+data
+
+
+```
+
+This is a good start, but there are some problems. First, the AI only gave values of NA to food consumption data collected in the spring and summer. Second, there are an abnormally high number of old birds in the population; in a normal wild population, we'd expect to see more mockingbirds in the 2-8 year range, as 14 is on the old end for a mockingbird. We'll have the AI correct the data frame with the following prompt:
+
+"Northern Mockingbirds have an average lifespan of 8 years in the wild. Young and elderly individuals have a higher mortality rate. Given this information, please adjust the age variable to more accurately reflect age distribution in a wild population of mockingbirds. Furthermore, mockingbirds consume more food in the spring and summer due to increased energy demands that come with mating and nesting. Please replace the NA food consumption values you gave with randomized values that have an average of 0.5."
+
+The AI then adjusted our previous code string as follows:
+
+```{r}
+# Set the seed for reproducibility
+#set.seed(123)
+
+# Define the number of birds
+#N <- 100
+
+# Generate random ages between 1 and 14 years
+#age <- sample(1:14, N, replace = TRUE, prob = c(0.05, 0.05, 0.1, 0.15, 0.2, 0.15, 0.1, 0.05, 0.025, 0.025))
+
+# Define the two types of food
+#food_type <- c("insects", "plants")
+
+# Define the average daily food consumption in ounces
+#food_consumption <- 0.5
+
+# Define the seasons
+#seasons <- c("spring", "summer", "fall", "winter")
+
+# Define the proportion of insects consumed in each season
+#insect_proportion <- c(0.6, 0.8, 0.4, 0.2)
+
+# Define the sex
+#sex <- sample(c("male", "female"), N, replace = TRUE)
+
+# Generate the data
+#data <- tibble(
+ # Food_Type = rep(food_type, each = N/2),
+# Age = age,
+ # Daily_Food_Consumption = rnorm(N, food_consumption, 0.1),
+ # Season = rep(seasons, each = N/4),
+ # Sex = sex
+# )
+
+# Adjust the food consumption based on the season
+#data$Daily_Food_Consumption[data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer")] <- 
+ # data$Daily_Food_Consumption[data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer")] * 
+ # rep(insect_proportion[1:2], each = sum(data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer")))
+
+# Replace the NA values with randomized values that have an average of 0.5
+#data <- data %>% mutate(Daily_Food_Consumption = replace_na(Daily_Food_Consumption, rnorm(sum(is.na(Daily_Food_Consumption)), 0.5, 0.1)))
+
+# Print the data
+#data
+
+
+
+```
+
+This generates a new error in the way the AI created values for the age variable. I gave the AI this prompt to correct the broken lines: 
+
+"The issue with NA values has been solved. I now need you to correct the line where you generate random ages between 1 and 14 years to resolve this error: Error in sample.int(length(x), size, replace, prob) : 
+  incorrect number of probabilities"
+  
+The following code was generated: 
+
+```{r}
+# Set the seed for reproducibility
+set.seed(123)
+
+# Define the number of birds
+N <- 100
+
+# Generate random ages between 1 and 14 years with a probability distribution that reflects the higher mortality rate of young and elderly individuals
+age <- sample(c(1:4, 5:8, 9:12, 13:14), N, replace = TRUE)
+
+# Define the two types of food
+food_type <- c("insects", "plants")
+
+# Define the average daily food consumption in ounces
+food_consumption <- 0.5
+
+# Define the seasons
+seasons <- c("spring", "summer", "fall", "winter")
+
+# Define the proportion of insects consumed in each season
+insect_proportion <- c(0.6, 0.8, 0.4, 0.2)
+
+# Define the sex
+sex <- sample(c("male", "female"), N, replace = TRUE)
+
+# Generate the data
+data <- tibble(
+  Food_Type = rep(food_type, each = N/2),
+  Age = age,
+  Daily_Food_Consumption = rnorm(N, food_consumption, 0.1),
+  Season = rep(seasons, each = N/4),
+  Sex = sex
+)
+
+# Adjust the food consumption based on the season
+data$Daily_Food_Consumption[data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer")] <- 
+  data$Daily_Food_Consumption[data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer")] * 
+  rep(insect_proportion[1:2], each = sum(data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer")))
+
+# Replace the NA values with randomized values that have an average of 0.5
+if (any(is.na(data$Daily_Food_Consumption))) {
+  data <- data %>% mutate(Daily_Food_Consumption = replace_na(Daily_Food_Consumption, rnorm(sum(is.na(Daily_Food_Consumption)), mean(Daily_Food_Consumption), 0.1)))
+}
+
+
+# Print the data
+data
+
+```
+
+We seem to have finally generated a data set that should reflect associations we expect to see in the population. However, I'd like to make one more adjustment that reflects increased food consumption by females in the spring and summer due to reproductive demands. I'll use a 1.75 times increase in food consumption, as data is limited on the exact amounts/averages mockingbirds consume.
+
+```{r}
+# Set the seed for reproducibility
+set.seed(123)
+
+# Define the number of birds
+N <- 100
+
+# Generate random ages between 1 and 14 years with a probability distribution that reflects the higher mortality rate of young and elderly individuals
+age <- sample(c(1:4, 5:8, 9:12, 13:14), N, replace = TRUE)
+
+# Define the two types of food
+food_type <- c("insects", "plants")
+
+# Define the average daily food consumption in ounces
+food_consumption <- 0.5
+
+# Define the seasons
+seasons <- c("spring", "summer", "fall", "winter")
+
+# Define the proportion of insects consumed in each season
+insect_proportion <- c(0.6, 0.8, 0.4, 0.2)
+
+# Define the sex
+sex <- sample(c("male", "female"), N, replace = TRUE)
+
+# Generate the data
+data <- tibble(
+  Food_Type = rep(food_type, each = N/2),
+  Age = age,
+  Daily_Food_Consumption = rnorm(N, food_consumption, 0.1),
+  Season = rep(seasons, each = N/4),
+  Sex = sex
+)
+
+# Adjust the food consumption based on the season and sex
+data$Daily_Food_Consumption[data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer") & data$Sex == "female"] <- 
+  data$Daily_Food_Consumption[data$Food_Type == "insects" & (data$Season == "spring" | data$Season == "summer") & data$Sex == "female"] * 
+  1.75
+
+# Replace the NA values with randomized values that have an average of 0.5
+if (any(is.na(data$Daily_Food_Consumption))) {
+  data <- data %>% mutate(Daily_Food_Consumption = replace_na(Daily_Food_Consumption, rnorm(sum(is.na(Daily_Food_Consumption)), mean(Daily_Food_Consumption), 0.1)))
+}
+
+
+# Print the data
+data
+```
+This dataset looks a lot better. We'll now check the structure and summary to get a better idea of what we created.
+
+```{r}
+#check the structure and summary
+summary(data)
+structure(data)
+```
+
+Our data looks good and reflects the averages we had the AI incorporate when creating our values. We'll now create a few plots looking at some relationships in the data.
+
+```{r}
+#create a plot with food consumption as a function of season for all individuals (stratified by sex)
+ggplot(data, aes(x = Season, y = Daily_Food_Consumption, color = Sex)) +
+  geom_boxplot() +
+  labs(title = "Food Consumption as a Function of Season for All Individuals, Stratified by Sex",
+       x = "Season",
+       y = "Daily Food Consumption (oz)") +
+  theme_bw()
+
+```
+The boxplot shows that our assumptions are reflected in the data set; females consume more in the spring and summer and our average food consumption is 0.5 ounces a day. Now we'll see if the data accurately shows changes in the primary type of food consumed over the seasons.
+
+```{r}
+#create a histogram comparing food type consumed in different seasons stratified by sex
+ggplot(data, aes(x = Season, fill = Food_Type)) +
+  geom_bar(position = "dodge", stat = "count") +
+  facet_grid(. ~ Sex) +
+  labs(title = "Food Type Comparison Across Seasons, Stratified by Sex",
+       x = "Season",
+       y = "Count",
+       fill = "Food Type") +
+  theme_bw()
+
+
+```
+The plots show that insects are the predominant food source in the spring and summer while plants dominate the winter and fall. This accurately reflects booms in the insect population in spring and summer; Northern Mockingbirds consume over 85% insects then, dropping to around 15% in the colder seasons. Now that we see our data is tidy, reflects our assumptions and follows the trends we identified, we can fit the data to some linear models.
+
+```{r}
+#create a linear model with season and sex as predictors for food consumption
+model1<- lm(Daily_Food_Consumption~ Season + Sex, data = data)
+summary(model1)
+```
+It seems like winter doesn't have a significant impact on food consumption, but spring and summer do in the created dataset. Now we'll move on to make a couple more models.
+
+```{r}
+#create a linear model with season as a predictor for food type
+# model2<- lm(Food_Type ~ Season, data = data)
+# summary(model2)
+```
+
+A linear regression didn't work for this type of data.The above line generated an error message. After consulting with AI, a multinomial logistic regression model would work better. We'll also include sex as a predictor in this one.
+
+```{r}
+#load the nnet package for this model
+library(nnet)
+# Create a multinomial logistic regression model with season and sex as predictors for food type
+model2 <- multinom(Food_Type ~ Season + Sex, data = data)
+summary(model2)
+```
+
+It seems that the model agrees with our assumptions. The odds of mockingbirds choosing plants over insects are lower in the spring and summer and the opposite in winter. The residual deviance is low, indicating a good fit. We've created a pretty good dataset that has the associations and trends we wanted to see.
