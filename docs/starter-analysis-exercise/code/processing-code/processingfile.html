@@ -9,7 +9,7 @@
 <meta name="author" content="Andreas Handel">
 <meta name="dcterms.date" content="2023-01-03">
 
-<title>YOURNAME Data Analysis Portfolio - An example cleaning script</title>
+<title>Kevin Kosewick’s Data Analysis Portfolio - An example cleaning script</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -71,10 +71,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../../index.html">
-    <span class="navbar-title">YOURNAME Data Analysis Portfolio</span>
+    <span class="navbar-title">Kevin Kosewick’s Data Analysis Portfolio</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -149,12 +149,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="../../../tidytuesday-exercise/tidytuesday-exercise.html">
  <span class="dropdown-text">Tidy Tuesday Exercise</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../../data-exercise/data-exercise.html">
+ <span class="dropdown-text">Synthetic Data Exercise</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="../../../URL-TO-THIS-REPOSITORY-HERE"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/KKosewick/kevinkosewick-MADA-portfolio"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -275,33 +279,43 @@ Attaching package: 'dplyr'</code></pre>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">glimpse</span>(rawdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 14
-Columns: 3
-$ Height &lt;chr&gt; "180", "175", "sixty", "178", "192", "6", "156", "166", "155", …
-$ Weight &lt;dbl&gt; 80, 70, 60, 76, 90, 55, 90, 110, 54, 7000, NA, 45, 55, 50
-$ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F", "M…</code></pre>
+Columns: 5
+$ Height            &lt;chr&gt; "180", "175", "sixty", "178", "192", "6", "156", "16…
+$ Weight            &lt;dbl&gt; 80, 70, 60, 76, 90, 55, 90, 110, 54, 7000, NA, 45, 5…
+$ Gender            &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "…
+$ `Strands of Hair` &lt;dbl&gt; 4, 5000, 5005, 6000, 7000, 8000, 1, 9000, 7500, 7550…
+$ `Hair Color`      &lt;chr&gt; "Blonde", "Red", "Black", "Brown", "White", "Purple"…</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(rawdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    Height              Weight          Gender         
- Length:14          Min.   :  45.0   Length:14         
- Class :character   1st Qu.:  55.0   Class :character  
- Mode  :character   Median :  70.0   Mode  :character  
-                    Mean   : 602.7                     
-                    3rd Qu.:  90.0                     
-                    Max.   :7000.0                     
-                    NA's   :1                          </code></pre>
+<pre><code>    Height              Weight          Gender          Strands of Hair
+ Length:14          Min.   :  45.0   Length:14          Min.   :   1   
+ Class :character   1st Qu.:  55.0   Class :character   1st Qu.:5010   
+ Mode  :character   Median :  70.0   Mode  :character   Median :6525   
+                    Mean   : 602.7                      Mean   :5960   
+                    3rd Qu.:  90.0                      3rd Qu.:7888   
+                    Max.   :7000.0                      Max.   :9122   
+                    NA's   :1                                          
+  Hair Color       
+ Length:14         
+ Class :character  
+ Mode  :character  
+                   
+                   
+                   
+                   </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rawdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 3
-  Height Weight Gender
-  &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt; 
-1 180        80 M     
-2 175        70 O     
-3 sixty      60 F     
-4 178        76 F     
-5 192        90 NA    
-6 6          55 F     </code></pre>
+<pre><code># A tibble: 6 × 5
+  Height Weight Gender `Strands of Hair` `Hair Color`
+  &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt; &lt;chr&gt;       
+1 180        80 M                      4 Blonde      
+2 175        70 O                   5000 Red         
+3 sixty      60 F                   5005 Black       
+4 178        76 F                   6000 Brown       
+5 192        90 NA                  7000 White       
+6 6          55 F                   8000 Purple      </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>skimr<span class="sc">::</span><span class="fu">skim</span>(rawdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -318,7 +332,7 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">3</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -330,11 +344,11 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="even">
 <td style="text-align: left;">character</td>
-<td style="text-align: left;">2</td>
+<td style="text-align: left;">3</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">numeric</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">________________________</td>
@@ -391,22 +405,32 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">0</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Hair Color</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
 <table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 17%">
+<col style="width: 11%">
+<col style="width: 15%">
 <col style="width: 8%">
-<col style="width: 10%">
+<col style="width: 8%">
 <col style="width: 3%">
+<col style="width: 8%">
 <col style="width: 5%">
-<col style="width: 5%">
+<col style="width: 7%">
 <col style="width: 5%">
 <col style="width: 6%">
-<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -431,11 +455,24 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">602.69</td>
 <td style="text-align: right;">1922.25</td>
 <td style="text-align: right;">45</td>
-<td style="text-align: right;">55</td>
+<td style="text-align: right;">55.00</td>
 <td style="text-align: right;">70</td>
-<td style="text-align: right;">90</td>
+<td style="text-align: right;">90.0</td>
 <td style="text-align: right;">7000</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Strands of Hair</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5959.57</td>
+<td style="text-align: right;">2882.38</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5009.75</td>
+<td style="text-align: right;">6525</td>
+<td style="text-align: right;">7887.5</td>
+<td style="text-align: right;">9122</td>
+<td style="text-align: left;">▂▁▃▃▇</td>
 </tr>
 </tbody>
 </table>
@@ -464,7 +501,7 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">3</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -476,11 +513,11 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="even">
 <td style="text-align: left;">character</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">numeric</td>
-<td style="text-align: left;">2</td>
+<td style="text-align: left;">3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">________________________</td>
@@ -527,22 +564,32 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">0</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Hair Color</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 8%">
+<col style="width: 18%">
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 9%">
 <col style="width: 9%">
 <col style="width: 3%">
-<col style="width: 8%">
-<col style="width: 4%">
-<col style="width: 4%">
+<col style="width: 9%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
 <col style="width: 6%">
-<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -586,6 +633,19 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">7000</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Strands of Hair</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6033.00</td>
+<td style="text-align: right;">2986.41</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5024.00</td>
+<td style="text-align: right;">7000</td>
+<td style="text-align: right;">8000</td>
+<td style="text-align: right;">9122</td>
+<td style="text-align: left;">▂▁▂▃▇</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -616,7 +676,7 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">3</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -628,11 +688,11 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="even">
 <td style="text-align: left;">character</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">numeric</td>
-<td style="text-align: left;">2</td>
+<td style="text-align: left;">3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">________________________</td>
@@ -679,22 +739,32 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">0</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Hair Color</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 16%">
-<col style="width: 12%">
-<col style="width: 16%">
+<col style="width: 17%">
+<col style="width: 11%">
+<col style="width: 15%">
 <col style="width: 8%">
-<col style="width: 9%">
-<col style="width: 4%">
 <col style="width: 8%">
 <col style="width: 4%">
-<col style="width: 4%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
 <col style="width: 6%">
-<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -738,6 +808,19 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">7000</td>
 <td style="text-align: left;">▇▁▁▁▁</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Strands of Hair</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6033.00</td>
+<td style="text-align: right;">2986.41</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5024.00</td>
+<td style="text-align: right;">7000</td>
+<td style="text-align: right;">8000</td>
+<td style="text-align: right;">9122</td>
+<td style="text-align: left;">▂▁▂▃▇</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -761,7 +844,7 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">3</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -773,11 +856,11 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="even">
 <td style="text-align: left;">character</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">numeric</td>
-<td style="text-align: left;">2</td>
+<td style="text-align: left;">3</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">________________________</td>
@@ -824,22 +907,32 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">0</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Hair Color</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 8%">
+<col style="width: 18%">
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 4%">
 <col style="width: 7%">
 <col style="width: 5%">
-<col style="width: 7%">
 <col style="width: 5%">
 <col style="width: 5%">
 <col style="width: 6%">
-<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -883,6 +976,19 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">110</td>
 <td style="text-align: left;">▇▂▃▃▂</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Strands of Hair</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5893.55</td>
+<td style="text-align: right;">3232.78</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5012.0</td>
+<td style="text-align: right;">7000</td>
+<td style="text-align: right;">8089</td>
+<td style="text-align: right;">9122</td>
+<td style="text-align: left;">▃▁▃▃▇</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -905,7 +1011,7 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">3</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -916,20 +1022,61 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">factor</td>
+<td style="text-align: left;">character</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">2</td>
+<td style="text-align: left;">factor</td>
+<td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">________________________</td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Group variables</td>
 <td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Hair Color</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
 </tr>
 </tbody>
 </table>
@@ -967,17 +1114,17 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <p><strong>Variable type: numeric</strong></p>
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 8%">
+<col style="width: 18%">
+<col style="width: 11%">
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 4%">
 <col style="width: 7%">
 <col style="width: 5%">
-<col style="width: 7%">
 <col style="width: 5%">
 <col style="width: 5%">
 <col style="width: 6%">
-<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1021,6 +1168,19 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">110</td>
 <td style="text-align: left;">▇▂▃▃▂</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Strands of Hair</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5893.55</td>
+<td style="text-align: right;">3232.78</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5012.0</td>
+<td style="text-align: right;">7000</td>
+<td style="text-align: right;">8089</td>
+<td style="text-align: right;">9122</td>
+<td style="text-align: left;">▃▁▃▃▇</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1043,7 +1203,7 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">3</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -1054,20 +1214,61 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">factor</td>
+<td style="text-align: left;">character</td>
 <td style="text-align: left;">1</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">numeric</td>
-<td style="text-align: left;">2</td>
+<td style="text-align: left;">factor</td>
+<td style="text-align: left;">1</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">________________________</td>
 <td style="text-align: left;"></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Group variables</td>
 <td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Hair Color</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
 </tr>
 </tbody>
 </table>
@@ -1105,17 +1306,17 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <p><strong>Variable type: numeric</strong></p>
 <table class="table table-sm table-striped small">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 12%">
-<col style="width: 17%">
-<col style="width: 8%">
-<col style="width: 7%">
+<col style="width: 18%">
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 4%">
 <col style="width: 5%">
 <col style="width: 5%">
 <col style="width: 5%">
 <col style="width: 5%">
 <col style="width: 6%">
-<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1158,6 +1359,19 @@ $ Gender &lt;chr&gt; "M", "O", "F", "F", "NA", "F", "O", "M", "N", "M", "F", "F"
 <td style="text-align: right;">80</td>
 <td style="text-align: right;">110</td>
 <td style="text-align: left;">▇▂▃▂▂</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Strands of Hair</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5592.11</td>
+<td style="text-align: right;">3533.51</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5000</td>
+<td style="text-align: right;">6000</td>
+<td style="text-align: right;">8178</td>
+<td style="text-align: right;">9122</td>
+<td style="text-align: left;">▃▁▃▂▇</td>
 </tr>
 </tbody>
 </table>
