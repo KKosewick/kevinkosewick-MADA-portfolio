@@ -1,0 +1,108 @@
+---
+title: "Data Exercise"
+author: "Kevin Kosewick"
+editor: visual
+---
+
+For this exercise, I'll be using a dataset I got from the [CDC website](https://data.cdc.gov/Health-Consequences-and-Costs/Smoking-Attributable-Mortality-Morbidity-and-Econo/ezab-8sq5/about_data) about smoking attributable expenses in the U.S. The data includes expenses per state for different categories such as hospital bills, ambulances, and prescriptions as well as overall expenses for the U.S. from 2005-2009. We'll do an exploratory data analysis and some data processing for this exercise.
+
+```{r}
+#load the dataset
+library(here)
+smoke_expense<- read.csv(here("cdcdata-exercise", "SAE.csv"))
+#make sure data fully loaded by checking number of rows and columns. We should have 19 variables and 1560 observations
+nrow(smoke_expense)
+ncol(smoke_expense)
+#check the structure and summary of the data
+summary(smoke_expense)
+structure(smoke_expense)
+```
+
+We can see that there's one observation for each of our 6 expense types per year. We can also see from the structure and summary that there are many columns that we don't need for an analysis. We can go ahead and pick out the ones that are of interest to us: year, location, variable (which refers to the type of expense), and value (which is the cost in millions of dollars for each expense type). All of the other columns seem to be for record keeping purposes.
+
+```{r}
+#make a new data frame containing only our four columns of interest: Year, LocationAbbr, Variable, and Data_Value.
+smoke_expense_2 <- smoke_expense[, c("Year", "LocationAbbr", "Variable", "Data_Value")]
+#check the new object to make sure it has everything we want
+structure(smoke_expense_2)
+summary(smoke_expense_2)
+```
+
+This new object is much more condensed and easier to work with. We'll check now to make sure there are no NA values and then proceed with some EDA.
+
+```{r}
+#check for NA values
+na_check<- is.na(smoke_expense_2)
+print(sum(na_check))
+```
+
+Since there aren't any NA values and looking at the structure indicates no missing values, we can begin to check the mean and standard deviation of each expense type across the 4 years in the data set. Rather than looking at all 50 states, let's focus on 5 to make this a bit easier. We'll use GA, TN, MS, CA, and FL.
+
+Using Microsoft Copilot with GPT-4 in "Precise Mode", I entered the following prompt to get the code I'm about to use: "For my exploratory analysis I want to summarize each variable in a way that can be described by a distribution. For instance, I want to be able to determine the mean and standard deviation of each expense type for 5 different states over the 4 year period recorded in the dataset. What is the best approach for this and could you provide some example code?"
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+
+# Filter for the 5 states you are interested in
+states <- c("TN", "MS", "GA", "FL", "CA")
+smoke_filtered <- smoke_expense_2 %>% filter(LocationAbbr %in% states)
+
+# Calculate mean and standard deviation
+smoke_summary <- smoke_filtered %>%
+  group_by(LocationAbbr, Year, Variable) %>%
+  summarise(
+    Mean = mean(Data_Value, na.rm = TRUE),
+    SD = sd(Data_Value, na.rm = TRUE)
+  )
+
+# Print the summary statistics
+print(smoke_summary)
+
+```
+
+This is good information, but since there's only one observation for each expense category per year, we don't learn much from a mean or standard deviation (SD) calculation. We can group each year together to get the mean and SD to allow for easier creation of synthetic data for the second part of this exercise.
+
+```{r}
+# Calculate mean and standard deviation for all 5 states combined
+smoke_summary <- smoke_filtered %>%
+  group_by(LocationAbbr, Variable) %>%
+  summarise(
+    Mean = mean(Data_Value, na.rm = TRUE),
+    SD = sd(Data_Value, na.rm = TRUE)
+  )
+
+# Print the summary statistics
+print(smoke_summary)
+
+```
+
+Now we can create some visualizations of this information for easier interpretation of the data. I entered the following prompt into Microsoft Copilot with GPT-4 in "Precise mode": "I want to make plots now to determine if the distribution of this data is relatively normal. How would I go about that?"
+
+I received this code string from it, with the only modifications I made being the proper column names and adjusting the binwidth to the square root of all of the observations:
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Create a histogram
+ggplot(smoke_filtered, aes(x = Data_Value)) + 
+  geom_histogram(binwidth = 12.25, fill = "blue", color = "black") +
+  facet_wrap(~ Variable) +
+  theme_minimal() +
+  labs(title = "Histogram of Expenses", x = "Expense", y = "Frequency")
+
+# Create a density plot
+ggplot(smoke_filtered, aes(x = Data_Value)) + 
+  geom_density(fill = "blue") +
+  facet_wrap(~ Variable) +
+  theme_minimal() +
+  labs(title = "Density Plot of Expenses", x = "Expense", y = "Density")
+
+# Create a Q-Q plot
+library(car)
+qqPlot(smoke_filtered$Data_Value, distribution = "norm", main = "Q-Q Plot of Expenses")
+
+```
+
+The histogram isn't very useful for much besides visualizing the numbers, but the Q-Q plot shows that the distribution for the data as a whole seems normal but contains some outliers to the left and the right. The density plots point out that "Other", "Nursing Home", and "Prescription Drugs", and "Ambulatory" expenses are pretty skewed, but the other two are pretty normally distributed. Hopefully this is enough information to create a good synthetic data set that mimics the trends seen in this one!
