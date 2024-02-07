@@ -13,9 +13,9 @@ smoke_expense<- read.csv(here("cdcdata-exercise", "SAE.csv"))
 #make sure data fully loaded by checking number of rows and columns. We should have 19 variables and 1560 observations
 nrow(smoke_expense)
 ncol(smoke_expense)
-#check the structure and summary of the data
+#check the structure and summary of the data. For the sake of the webpage, I've made the structure line an annotation, but if you're viewing this in R go ahead and delete the #
 summary(smoke_expense)
-structure(smoke_expense)
+#structure(smoke_expense)
 ```
 
 We can see that there's one observation for each of our 6 expense types per year. We can also see from the structure and summary that there are many columns that we don't need for an analysis. We can go ahead and pick out the ones that are of interest to us: year, location, variable (which refers to the type of expense), and value (which is the cost in millions of dollars for each expense type). All of the other columns seem to be for record keeping purposes.
@@ -23,8 +23,8 @@ We can see that there's one observation for each of our 6 expense types per year
 ```{r}
 #make a new data frame containing only our four columns of interest: Year, LocationAbbr, Variable, and Data_Value.
 smoke_expense_2 <- smoke_expense[, c("Year", "LocationAbbr", "Variable", "Data_Value")]
-#check the new object to make sure it has everything we want
-structure(smoke_expense_2)
+#check the new object to make sure it has everything we want. For the sake of the webpage, I've made the structure line an annotation, but if you're viewing this in R go ahead and delete the #
+#structure(smoke_expense_2)
 summary(smoke_expense_2)
 ```
 
