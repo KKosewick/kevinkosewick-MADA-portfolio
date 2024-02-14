@@ -2,4 +2,161 @@
 title: "Presentation Exercise"
 ---
 
-Placeholder file for the future data/results presentation exercise.
+For this exercise, we will be recreating a figure found on the FiveThirtyEight  [website](https://fivethirtyeight.com/features/aging-congress-boomers/) about data detailing how Congress members are older on average than ever before. We'll use the ggplot package and some help from Microsoft Copilot's Precise Mode to generate the base code.
+
+I entered this prompt to get this first output that I modified to load the actual dataset:
+
+"I would like to use R to recreate the figure titled "The House and Senate are older than ever before
+Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023" found at this link: https://fivethirtyeight.com/features/aging-congress-boomers/. Can you give me code to reproduce that exact figure? The data is open access and available here: https://data.fivethirtyeight.com/. It is under the section "Congress Today Is Older Than It's Ever Been" from April 2, 2023." 
+
+I also entered this prompt for the line that adds the column "Year" to the set: "The dataset doesn't have a column for "Year", but instead records the time period in a column named "congress" which is defined as follows:  The number of the Congress that this member’s row refers to. For example, `118` indicates the member served in the 118th Congress (2023-2025). How do I go from this raw format to the one in their figure?" As well as this prompt: "Is there a way I can modify the plot to just show the average ages for each year? The variable "age_years" in the dataset doesn't do this; it only lists the age for each member in the set."
+
+Here is the AI output (made into annotations to prevent loading/error messages) after all of these prompts:
+
+```{r}
+# Load necessary libraries
+# library(dplyr)
+# library(ggplot2)
+
+# Calculate average age for each year
+#avg_age <- congress %>%
+#  group_by(Year, chamber) %>%
+#  summarise(avg_age_years = mean(age_years, na.rm = TRUE))
+
+# Plot the data
+#ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
+ # geom_line() +
+ # labs(title = "The House and Senate are older than ever before",
+  #     subtitle = "Average age of the U.S. Senate and U.S. House by Congress, 1919 to 2023",
+  #     x = "Year",
+  #     y = "Average Age",
+  #     color = "Chamber") +
+ # theme_bw()
+
+```
+
+And everything past here is the manually modified code:
+```{r}
+#load packages
+library(ggplot2)
+library(here)
+library(dplyr)
+
+# Replace 'path_to_file' with the path to your downloaded file
+congress <- read.csv(here("presentation-exercise", "congress-demographics", "data_aging_congress.csv"))
+#Check the data
+head(congress)
+
+# Add a Year column to the data frame. 1787 is the first period of Congress with new ones every 2 years, so this calculation makes the "congress" column easier to visualize.
+congress$Year <- 1787 + 2 * congress$congress
+
+#Calculate the average age for each year in the dataset
+avg_age <- congress %>%
+  group_by(Year, chamber) %>%
+  summarise(avg_age_years = mean(age_years, na.rm = TRUE))
+
+```
+Now we can create the plot: 
+```{r}
+# Plot the data
+ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
+  geom_line() +
+  labs(title = "The House and Senate are older than ever before",
+       subtitle = "Average age of the U.S. Senate and U.S. House by Congress, 1919 to 2023",
+       x = "Year",
+       y = "Average Age",
+       color = "Chamber") +
+  theme_minimal()
+```
+This is very close to the original. We'll now just modify the x and y axes to have the same increments in time as the original and change the colors of the lines. We'll also make the lines thicker and remove the gridlines.
+
+```{r}
+#modify the axis increments and the colors of the lines. Remove gridlines and thicken lines.
+ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
+  geom_line(linewidth = 1.5) +
+  labs(title = "The House and Senate are older than ever before",
+       subtitle = "Average age of the U.S. Senate and U.S. House by Congress, 1919 to 2023",
+       x = "Year",
+       y = "Average Age",
+       color = "Chamber") +
+  scale_x_continuous(breaks = seq(1920, 2020, by = 10), limits = c(1920, 2020)) +
+  scale_y_continuous(breaks = seq(45, 65, by = 5), limits = c(45, 65)) +
+  scale_color_manual(values = c("Senate" = "purple", "House" = "green")) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
+
+```
+This looks extremely close to the original. R is a very useful tool for creating and reproducing visualizations.
+Here's the original figure for comparison:
+![Original Figure](originalfigure.png)
+
+
+
+
+
+For the next part of this exercise, we'll create table with the same data shown in the plot. To begin, I gave Microsoft Copilot Precise Mode this prompt: 
+"Now I would like to make a table that displays the information shown in the plot in a visually pleasing way. You can pick the R package used. What would the code look like for this?"
+
+```{r}
+# Load the required package
+library(knitr)
+library(kableExtra)
+# Create the table
+kable(avg_age, caption = "Average age of the U.S. Senate and U.S. House by Congress, 1919 to 2023") %>%
+  kable_styling("striped", full_width = F)
+
+```
+This has too many rows and isn't very visually appealing. I'll try a different prompt: "Is there a different type of table you suggest to display a large dataset?"
+
+```{r}
+# Load the required package
+library(dplyr)
+library(knitr)
+
+# Create a new variable for the decade
+avg_age$Decade <- 10 * floor(avg_age$Year / 10)
+
+# Summarize the data
+summary_data <- avg_age %>%
+  group_by(Decade, chamber) %>%
+  summarise(
+    Mean = mean(avg_age_years),
+    Min = min(avg_age_years),
+    Max = max(avg_age_years)
+  )
+
+# Create the table
+knitr::kable(summary_data, caption = "Summary of average age of the U.S. Senate and U.S. House by decade, 1919 to 2023")
+
+```
+
+Much better, but it isn't very stylistically pleasing. I'll ask the AI one more prompt: "Can I stylise it to look more appealing?"
+
+```{r}
+# Load the required package
+library(gt)
+
+# Create the table
+summary_data %>%
+  gt() %>%
+  tab_header(
+    title = "Summary of average age of the U.S. Senate and U.S. House by decade, 1919 to 2023"
+  ) %>%
+  cols_label(
+    Decade = "Decade",
+    chamber = "Chamber",
+    Mean = "Mean Age",
+    Min = "Minimum Age",
+    Max = "Maximum Age"
+  ) %>%
+  fmt_number(
+    columns = c(Mean, Min, Max),
+    decimals = 2
+  ) %>%
+  tab_options(
+    table.width = px(500),
+    table.font.size = px(12)
+  )
+
+```
+This is a pretty good table overall and much easier to digest than the first one the AI spit out. Tables don't seem to have as many options as figures when it comes to customization, but this is a good and quick way to visualize data and it gives more information than the plot did.
