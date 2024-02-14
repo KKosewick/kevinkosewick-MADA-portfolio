@@ -97,7 +97,7 @@ ggplot(smoke_filtered, aes(x = Data_Value)) +
   geom_density(fill = "blue") +
   facet_wrap(~ Variable) +
   theme_minimal() +
-  labs(title = "Density Plot of Expenses", x = "Expense", y = "Density")
+  labs(title = "Density Plot of Expenses", x = "Expense", y = "Density") 
 
 # Create a Q-Q plot
 library(car)
@@ -106,3 +106,115 @@ qqPlot(smoke_filtered$Data_Value, distribution = "norm", main = "Q-Q Plot of Exp
 ```
 
 The histogram isn't very useful for much besides visualizing the numbers, but the Q-Q plot shows that the distribution for the data as a whole seems normal but contains some outliers to the left and the right. The density plots point out that "Other", "Nursing Home", and "Prescription Drugs", and "Ambulatory" expenses are pretty skewed, but the other two are pretty normally distributed. Hopefully this is enough information to create a good synthetic data set that mimics the trends seen in this one!
+
+### This section was contributed by Emma Hardin-Parker 
+
+```{r}
+# Load required packages
+library(here)
+library(dplyr)
+library(ggplot2)
+library(skimr)
+library(gtsummary)
+```
+
+```{r}
+# Set a seed for reproducibility
+set.seed(207)
+# Define the number of observations to generate
+n_obs <- 150
+```
+
+I am now going to get a feel for the data ussing skimr and gtsummary() functions. 
+
+```{r}
+skimr::skim(smoke_filtered)
+```
+```{r}
+gtsummary::tbl_summary(smoke_filtered, statistic = list(
+  all_continuous() ~ "{mean}/{median}/{min}/{max}/{sd}",
+  all_categorical() ~ "{n} / {N} ({p}%)"
+),)
+```
+
+Now I am going to create a synthetic data set based off the actual data. 
+
+```{r}
+syn_smoke <- data.frame(
+  Year = integer(n_obs),
+  LocationAbbr = character(n_obs),
+  Variable = character(n_obs),
+  Data_Value = numeric(n_obs)
+)
+
+
+#Variable1
+syn_smoke$Year <- sample(c("2005", "2006", "2007", "2008", "2009"),
+                         n_obs, replace = TRUE,
+                         prob = as.integer(table(smoke_filtered$Year)))
+                   
+#Variable2 
+syn_smoke$LocationAbbr <- sample(c("GA", "MS", "TN", "FL", "CA"),
+                                 n_obs, replace = TRUE,
+                                 prob =  as.numeric(table(smoke_filtered$LocationAbbr)/100))
+
+#Variable3
+syn_smoke$Variable <- sample(c("Ambulatory", "Hospital", "Nursing Home", "Other", "Prescription Drugs", "Total"),
+                             n_obs,
+                             replace = TRUE,
+                             prob = as.numeric(table(smoke_filtered$Variable)/100))
+#Variable4
+syn_smoke$Data_Value <- round(runif(n_obs,
+                                    min = min(smoke_filtered$Data_Value),
+                                    max = max(smoke_filtered$Data_Value)), 1)
+```
+
+To make sure the synthetic data set was created properly, I am going to use the head(), glimpse(), and summary() functions to see if the first five rows look okay for further analyses.
+
+```{r}
+head(syn_smoke)
+summary(syn_smoke)
+glimpse(syn_smoke)
+```
+Everything looks as it should, so it's time to make some exploratory figures and tables. 
+
+```{r}
+# Calculate mean and standard deviation for all 5 states combined
+syn_smoke_summary <- syn_smoke %>%
+  group_by(LocationAbbr, Variable) %>%
+  summarise(
+    Mean = mean(Data_Value, na.rm = TRUE),
+    SD = sd(Data_Value, na.rm = TRUE)
+  )
+```
+```{r}
+# Create a histogram
+syn_hist <- ggplot(syn_smoke, aes(x = Data_Value)) + 
+  geom_histogram(binwidth = 12.25, fill = "blue", color = "black") +
+  facet_wrap(~ Variable) +
+  theme_minimal() +
+  labs(title = "Histogram of Expenses", x = "Expense", y = "Frequency")
+print(syn_hist)
+
+
+# Create a density plot
+library(scales)
+syn_dens <- ggplot(syn_smoke, aes(x = Data_Value)) + 
+  geom_density(fill = "blue") +
+  facet_wrap(~ Variable) +
+  theme_minimal() +
+  labs(title = "Density Plot of Expenses", x = "Expense", y = "Density") +
+  scale_x_continuous(labels = label_number())
+print(syn_dens)
+
+
+# Create a Q-Q plot
+library(car)
+syn_qq <- qqPlot(syn_smoke$Data_Value, distribution = "norm", main = "Q-Q Plot of Expenses")
+```
+The histograms produced between the original data and the synthetic data were quite different. Most of the individual histograms per Variable created with the original data were skewed to the right, while the histograms produced with the synthetic data were evenly distributed throughout. 
+
+The density plots also look different between the original data and the synthetic data, however, I struggled to code this plot. For some reason, the density value on the y-axis used scientific notation and I had to add an additional line of code to remove it. Even with that transformation, the densities on average are higher in the synthetic plot than the original plot. 
+
+The q-q plot was undoubtedly the most interesting plot to compare to the original data. The synthetic q-q plot is significantly more normally distributed that the original plot. Though the histograms differed drastically, it is much easier to compare normality between the data sets using a q-q plot, so I am happy that I was able to successfully create this one. 
+
