@@ -107,7 +107,7 @@ qqPlot(smoke_filtered$Data_Value, distribution = "norm", main = "Q-Q Plot of Exp
 
 The histogram isn't very useful for much besides visualizing the numbers, but the Q-Q plot shows that the distribution for the data as a whole seems normal but contains some outliers to the left and the right. The density plots point out that "Other", "Nursing Home", and "Prescription Drugs", and "Ambulatory" expenses are pretty skewed, but the other two are pretty normally distributed. Hopefully this is enough information to create a good synthetic data set that mimics the trends seen in this one!
 
-### This section was contributed by Emma Hardin-Parker 
+### This section was contributed by Emma Hardin-Parker
 
 ```{r}
 # Load required packages
@@ -125,11 +125,12 @@ set.seed(207)
 n_obs <- 150
 ```
 
-I am now going to get a feel for the data ussing skimr and gtsummary() functions. 
+I am now going to get a feel for the data ussing skimr and gtsummary() functions.
 
 ```{r}
 skimr::skim(smoke_filtered)
 ```
+
 ```{r}
 gtsummary::tbl_summary(smoke_filtered, statistic = list(
   all_continuous() ~ "{mean}/{median}/{min}/{max}/{sd}",
@@ -137,7 +138,7 @@ gtsummary::tbl_summary(smoke_filtered, statistic = list(
 ),)
 ```
 
-Now I am going to create a synthetic data set based off the actual data. 
+Now I am going to create a synthetic data set based off the actual data.
 
 ```{r}
 syn_smoke <- data.frame(
@@ -176,7 +177,8 @@ head(syn_smoke)
 summary(syn_smoke)
 glimpse(syn_smoke)
 ```
-Everything looks as it should, so it's time to make some exploratory figures and tables. 
+
+Everything looks as it should, so it's time to make some exploratory figures and tables.
 
 ```{r}
 # Calculate mean and standard deviation for all 5 states combined
@@ -187,6 +189,7 @@ syn_smoke_summary <- syn_smoke %>%
     SD = sd(Data_Value, na.rm = TRUE)
   )
 ```
+
 ```{r}
 # Create a histogram
 syn_hist <- ggplot(syn_smoke, aes(x = Data_Value)) + 
@@ -212,9 +215,9 @@ print(syn_dens)
 library(car)
 syn_qq <- qqPlot(syn_smoke$Data_Value, distribution = "norm", main = "Q-Q Plot of Expenses")
 ```
-The histograms produced between the original data and the synthetic data were quite different. Most of the individual histograms per Variable created with the original data were skewed to the right, while the histograms produced with the synthetic data were evenly distributed throughout. 
 
-The density plots also look different between the original data and the synthetic data, however, I struggled to code this plot. For some reason, the density value on the y-axis used scientific notation and I had to add an additional line of code to remove it. Even with that transformation, the densities on average are higher in the synthetic plot than the original plot. 
+The histograms produced between the original data and the synthetic data were quite different. Most of the individual histograms per Variable created with the original data were skewed to the right, while the histograms produced with the synthetic data were evenly distributed throughout.
 
-The q-q plot was undoubtedly the most interesting plot to compare to the original data. The synthetic q-q plot is significantly more normally distributed that the original plot. Though the histograms differed drastically, it is much easier to compare normality between the data sets using a q-q plot, so I am happy that I was able to successfully create this one. 
+The density plots also look different between the original data and the synthetic data, however, I struggled to code this plot. For some reason, the density value on the y-axis used scientific notation and I had to add an additional line of code to remove it. Even with that transformation, the densities on average are higher in the synthetic plot than the original plot.
 
+The q-q plot was undoubtedly the most interesting plot to compare to the original data. The synthetic q-q plot is significantly more normally distributed that the original plot. Though the histograms differed drastically, it is much easier to compare normality between the data sets using a q-q plot, so I am happy that I was able to successfully create this one.
