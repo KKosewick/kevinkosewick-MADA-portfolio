@@ -306,23 +306,27 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 </div>
 </div>
-<p>This is very close to the original. We’ll now just modify the x and y axes to have the same increments in time as the original and change the colors of the lines. We’ll also make the lines thicker and remove the gridlines.</p>
+<p>This is very close to the original. We’ll now just modify the x and y axes to have the same increments in time as the original and change the colors of the lines. We’ll also change the plot to show stepwise increments instead of lines and remove the gridlines. We’ll also remove the axis labels since the original didn’t have any and bold our title. Then, we’ll adjust the legend position.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#modify the axis increments and the colors of the lines. Remove gridlines and thicken lines.</span></span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#modify the axis increments and the colors of the lines. Remove gridlines, make step plot instead of line plot, and thicken lines. Also adjust the legend position.</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(avg_age, <span class="fu">aes</span>(<span class="at">x =</span> Year, <span class="at">y =</span> avg_age_years, <span class="at">color =</span> chamber)) <span class="sc">+</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">linewidth =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"The House and Senate are older than ever before"</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Average age of the U.S. Senate and U.S. House by Congress, 1919 to 2023"</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Average Age"</span>,</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Chamber"</span>) <span class="sc">+</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1920</span>, <span class="dv">2020</span>, <span class="at">by =</span> <span class="dv">10</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">1920</span>, <span class="dv">2020</span>)) <span class="sc">+</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">""</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">""</span>) <span class="sc">+</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">1920</span>, <span class="dv">2020</span>, <span class="at">by =</span> <span class="dv">20</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">1920</span>, <span class="dv">2020</span>)) <span class="sc">+</span></span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">45</span>, <span class="dv">65</span>, <span class="at">by =</span> <span class="dv">5</span>), <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">45</span>, <span class="dv">65</span>)) <span class="sc">+</span></span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Senate"</span> <span class="ot">=</span> <span class="st">"purple"</span>, <span class="st">"House"</span> <span class="ot">=</span> <span class="st">"green"</span>)) <span class="sc">+</span></span>
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>, <span class="at">legend.justification =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.border =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face=</span><span class="st">"bold"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 6 rows containing missing values (`geom_line()`).</code></pre>
+<pre><code>Warning: Removed 6 rows containing missing values (`geom_step()`).</code></pre>
 </div>
 <div class="cell-output-display">
 <div>
@@ -1137,23 +1141,23 @@ Attaching package: 'kableExtra'</code></pre>
 <span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">table.font.size =</span> <span class="fu">px</span>(<span class="dv">12</span>)</span>
 <span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="lqpwnimoyz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lqpwnimoyz table {
+<div id="vkwnlykkxw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vkwnlykkxw table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#lqpwnimoyz thead, #lqpwnimoyz tbody, #lqpwnimoyz tfoot, #lqpwnimoyz tr, #lqpwnimoyz td, #lqpwnimoyz th {
+#vkwnlykkxw thead, #vkwnlykkxw tbody, #vkwnlykkxw tfoot, #vkwnlykkxw tr, #vkwnlykkxw td, #vkwnlykkxw th {
   border-style: none;
 }
 
-#lqpwnimoyz p {
+#vkwnlykkxw p {
   margin: 0;
   padding: 0;
 }
 
-#lqpwnimoyz .gt_table {
+#vkwnlykkxw .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1179,12 +1183,12 @@ Attaching package: 'kableExtra'</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_caption {
+#vkwnlykkxw .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#lqpwnimoyz .gt_title {
+#vkwnlykkxw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1196,7 +1200,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-bottom-width: 0;
 }
 
-#lqpwnimoyz .gt_subtitle {
+#vkwnlykkxw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1208,7 +1212,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-top-width: 0;
 }
 
-#lqpwnimoyz .gt_heading {
+#vkwnlykkxw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1220,13 +1224,13 @@ Attaching package: 'kableExtra'</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_bottom_border {
+#vkwnlykkxw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_col_headings {
+#vkwnlykkxw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1241,7 +1245,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_col_heading {
+#vkwnlykkxw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1261,7 +1265,7 @@ Attaching package: 'kableExtra'</code></pre>
   overflow-x: hidden;
 }
 
-#lqpwnimoyz .gt_column_spanner_outer {
+#vkwnlykkxw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1273,15 +1277,15 @@ Attaching package: 'kableExtra'</code></pre>
   padding-right: 4px;
 }
 
-#lqpwnimoyz .gt_column_spanner_outer:first-child {
+#vkwnlykkxw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lqpwnimoyz .gt_column_spanner_outer:last-child {
+#vkwnlykkxw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lqpwnimoyz .gt_column_spanner {
+#vkwnlykkxw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1293,11 +1297,11 @@ Attaching package: 'kableExtra'</code></pre>
   width: 100%;
 }
 
-#lqpwnimoyz .gt_spanner_row {
+#vkwnlykkxw .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#lqpwnimoyz .gt_group_heading {
+#vkwnlykkxw .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1323,7 +1327,7 @@ Attaching package: 'kableExtra'</code></pre>
   text-align: left;
 }
 
-#lqpwnimoyz .gt_empty_group_heading {
+#vkwnlykkxw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1338,15 +1342,15 @@ Attaching package: 'kableExtra'</code></pre>
   vertical-align: middle;
 }
 
-#lqpwnimoyz .gt_from_md > :first-child {
+#vkwnlykkxw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lqpwnimoyz .gt_from_md > :last-child {
+#vkwnlykkxw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lqpwnimoyz .gt_row {
+#vkwnlykkxw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1365,7 +1369,7 @@ Attaching package: 'kableExtra'</code></pre>
   overflow-x: hidden;
 }
 
-#lqpwnimoyz .gt_stub {
+#vkwnlykkxw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1378,7 +1382,7 @@ Attaching package: 'kableExtra'</code></pre>
   padding-right: 5px;
 }
 
-#lqpwnimoyz .gt_stub_row_group {
+#vkwnlykkxw .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1392,15 +1396,15 @@ Attaching package: 'kableExtra'</code></pre>
   vertical-align: top;
 }
 
-#lqpwnimoyz .gt_row_group_first td {
+#vkwnlykkxw .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#lqpwnimoyz .gt_row_group_first th {
+#vkwnlykkxw .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#lqpwnimoyz .gt_summary_row {
+#vkwnlykkxw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1410,16 +1414,16 @@ Attaching package: 'kableExtra'</code></pre>
   padding-right: 5px;
 }
 
-#lqpwnimoyz .gt_first_summary_row {
+#vkwnlykkxw .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_first_summary_row.thick {
+#vkwnlykkxw .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#lqpwnimoyz .gt_last_summary_row {
+#vkwnlykkxw .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1429,7 +1433,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_grand_summary_row {
+#vkwnlykkxw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1439,7 +1443,7 @@ Attaching package: 'kableExtra'</code></pre>
   padding-right: 5px;
 }
 
-#lqpwnimoyz .gt_first_grand_summary_row {
+#vkwnlykkxw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1449,7 +1453,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_last_grand_summary_row_top {
+#vkwnlykkxw .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1459,11 +1463,11 @@ Attaching package: 'kableExtra'</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_striped {
+#vkwnlykkxw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lqpwnimoyz .gt_table_body {
+#vkwnlykkxw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1472,7 +1476,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_footnotes {
+#vkwnlykkxw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1486,7 +1490,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_footnote {
+#vkwnlykkxw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1495,7 +1499,7 @@ Attaching package: 'kableExtra'</code></pre>
   padding-right: 5px;
 }
 
-#lqpwnimoyz .gt_sourcenotes {
+#vkwnlykkxw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1509,7 +1513,7 @@ Attaching package: 'kableExtra'</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lqpwnimoyz .gt_sourcenote {
+#vkwnlykkxw .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1517,63 +1521,63 @@ Attaching package: 'kableExtra'</code></pre>
   padding-right: 5px;
 }
 
-#lqpwnimoyz .gt_left {
+#vkwnlykkxw .gt_left {
   text-align: left;
 }
 
-#lqpwnimoyz .gt_center {
+#vkwnlykkxw .gt_center {
   text-align: center;
 }
 
-#lqpwnimoyz .gt_right {
+#vkwnlykkxw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lqpwnimoyz .gt_font_normal {
+#vkwnlykkxw .gt_font_normal {
   font-weight: normal;
 }
 
-#lqpwnimoyz .gt_font_bold {
+#vkwnlykkxw .gt_font_bold {
   font-weight: bold;
 }
 
-#lqpwnimoyz .gt_font_italic {
+#vkwnlykkxw .gt_font_italic {
   font-style: italic;
 }
 
-#lqpwnimoyz .gt_super {
+#vkwnlykkxw .gt_super {
   font-size: 65%;
 }
 
-#lqpwnimoyz .gt_footnote_marks {
+#vkwnlykkxw .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#lqpwnimoyz .gt_asterisk {
+#vkwnlykkxw .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#lqpwnimoyz .gt_indent_1 {
+#vkwnlykkxw .gt_indent_1 {
   text-indent: 5px;
 }
 
-#lqpwnimoyz .gt_indent_2 {
+#vkwnlykkxw .gt_indent_2 {
   text-indent: 10px;
 }
 
-#lqpwnimoyz .gt_indent_3 {
+#vkwnlykkxw .gt_indent_3 {
   text-indent: 15px;
 }
 
-#lqpwnimoyz .gt_indent_4 {
+#vkwnlykkxw .gt_indent_4 {
   text-indent: 20px;
 }
 
-#lqpwnimoyz .gt_indent_5 {
+#vkwnlykkxw .gt_indent_5 {
   text-indent: 25px;
 }
 </style>

@@ -68,22 +68,26 @@ ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
        color = "Chamber") +
   theme_minimal()
 ```
-This is very close to the original. We'll now just modify the x and y axes to have the same increments in time as the original and change the colors of the lines. We'll also make the lines thicker and remove the gridlines.
+This is very close to the original. We'll now just modify the x and y axes to have the same increments in time as the original and change the colors of the lines. We'll also change the plot to show stepwise increments instead of lines and remove the gridlines. We'll also remove the axis labels since the original didn't have any and bold our title. Then, we'll adjust the legend position.
 
 ```{r}
-#modify the axis increments and the colors of the lines. Remove gridlines and thicken lines.
+#modify the axis increments and the colors of the lines. Remove gridlines, make step plot instead of line plot, and thicken lines. Also adjust the legend position.
 ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
-  geom_line(linewidth = 1.5) +
+  geom_step(linewidth = 1.5) +
   labs(title = "The House and Senate are older than ever before",
-       subtitle = "Average age of the U.S. Senate and U.S. House by Congress, 1919 to 2023",
-       x = "Year",
-       y = "Average Age",
-       color = "Chamber") +
-  scale_x_continuous(breaks = seq(1920, 2020, by = 10), limits = c(1920, 2020)) +
+       subtitle = "Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023",
+       x = "",
+       y = "",
+       color = "") +
+  scale_x_continuous(breaks = seq(1920, 2020, by = 20), limits = c(1920, 2020)) +
   scale_y_continuous(breaks = seq(45, 65, by = 5), limits = c(45, 65)) +
   scale_color_manual(values = c("Senate" = "purple", "House" = "green")) +
   theme_bw() +
-  theme(panel.grid.minor = element_blank())
+  theme(legend.position = "top", legend.justification = c(0,1))+
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.border = element_blank(),
+        plot.title = element_text(face="bold"))
 
 ```
 This looks extremely close to the original. R is a very useful tool for creating and reproducing visualizations.
@@ -157,6 +161,5 @@ summary_data %>%
     table.width = px(500),
     table.font.size = px(12)
   )
-
 ```
 This is a pretty good table overall and much easier to digest than the first one the AI spit out. Tables don't seem to have as many options as figures when it comes to customization, but this is a good and quick way to visualize data and it gives more information than the plot did.
