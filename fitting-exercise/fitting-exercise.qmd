@@ -260,3 +260,141 @@ The coefficients for both models are very different than they were for our linea
 We can see that the ROC-AUC value for Model 3 (just dose as a predictor) shows similar performance of the model when predicting both male and female values. Remember that "1" is our males and "2" is our females. Model 4, on the other hand, shows a far stronger ability to accurately predict males than females. This makes sense given that we had so many more observations of males in our data.
 
 This set of models isn't as useful in making any sort of inferences about our data, as the question we asked before creating our model doesn't make much sense. It's good practice regardless.
+
+Now, we'll prep our data for the next exercise. We'll set a random seed and begin splitting our data into test/train sets to fit some more models.
+
+```{r}
+#The Race variable is weird; we'll remove it and continue with the exercise
+
+fittingdata_ultimate <- fittingdata_final
+
+fittingdata_ultimate$RACE <- NULL
+
+#set a random seed
+
+set.seed(1234)
+
+# Put 3/4 of the data into the training set 
+data_split <- initial_split(fittingdata_ultimate, prop = 3/4)
+
+# Create data frames for the two sets:
+train_data2 <- training(data_split)
+test_data2  <- testing(data_split)
+
+```
+
+Now that we've split the dataframe with the RACE variable removed, we can fit two new models. One uses only DOSE as a predictor for Y and one uses all variables. I gave Microsoft Copilot in Precise Mode the following prompt to generate this code and modified it to the specifics of our frame:
+
+"In R, I have a data frame composed of 6 variables. I've split the observations with 75% in a training set and 25% in a testing set. Can you write code that uses the tidymodels framework to fit two linear models to our continuous outcome of interest (Y). The first model should only use DOSE as predictor, the second model should use all predictors. For both models, the metric to optimize should be RMSE. You should only use the training data set for fitting."
+
+```{r}
+# Specify the model using only DOSE as predictor
+model_spec_dose <- linear_reg() %>% 
+  set_engine("lm") %>% 
+  set_mode("regression")
+
+# Create a workflow
+workflow_dose <- workflow() %>% 
+  add_model(model_spec_dose) %>% 
+  add_formula(Y ~ DOSE)
+
+# Specify the model using all predictors
+model_spec_all <- linear_reg() %>% 
+  set_engine("lm") %>% 
+  set_mode("regression")
+
+# Create a workflow
+workflow_all <- workflow() %>% 
+  add_model(model_spec_all) %>% 
+  add_formula(Y ~ .)
+
+#fit the DOSE model
+dose_fit <- workflow_dose %>% 
+  fit(data = train_data2)
+
+#augment to evaluate performance metric
+aug_dose<- augment(dose_fit, train_data2)
+aug_dose %>% select(Y, .pred)
+
+#get RMSE of DOSE model
+rmsedose<- aug_dose %>% rmse(truth = Y, .pred)
+
+#fit the all predictors model
+all_fit <- workflow_all %>% 
+  fit(data = train_data2)
+
+#augment to evaluate performance metric
+aug_all<- augment(all_fit, train_data2)
+aug_all %>% select(Y, .pred)
+
+#get RMSE of ALL model
+rmseall<- aug_all %>% rmse(truth = Y, .pred)
+
+
+# Print the results
+rmsedose
+rmseall
+
+```
+Our second model using every predictor has a lower RMSE. We'll now compute the RMSE of a null-model (one that would just predict the mean outcome for each observation, without using any predictor information).
+
+```{r}
+# Compute the mean outcome
+mean_outcome <- mean(train_data2$Y, na.rm = TRUE)
+
+# Create a data frame with the predicted values for the null model
+predictions_null <- data.frame(.pred = rep(mean_outcome, nrow(train_data2)))
+
+# Compute RMSE for the null model
+rmse_null <- predictions_null %>% 
+  bind_cols(train_data2 %>% select(Y)) %>% 
+  yardstick::rmse(Y, .pred)
+
+# Print the RMSE for the null model
+print(paste("RMSE for the null model: ", rmse_null$.estimate))
+```
+
+As the results show us (RMSE of 627), the best fitting model appears to be the one using all variables as predictors for Y. As to be expected, the null model that doesn't use any predictors has the highest RMSE, indicating that it's a poor fit. The model usng only DOSE as a predictor has a far lower RMSE (702 compared to 948) but it is higher than our all predictor model. 
+However, we can't be sure that this isn't due to overfitting since we're only using RMSE as our metric. We'll use cross-validation (CV) as a way to see if these results could be achieved on unseen data. We'll follow the tidymodels framework again for this code.
+
+```{r}
+#reset the seed
+set.seed(1234)
+
+# Create 10-fold cross-validation splits
+cv_splits <- vfold_cv(train_data2, v = 10)
+
+# Perform cross-validation for the DOSE model
+cv_results_dose <- workflow_dose %>% 
+  fit_resamples(resamples = cv_splits, metrics = metric_set(rmse))
+
+# Perform cross-validation for the all predictors model
+cv_results_all <- workflow_all %>% 
+  fit_resamples(resamples = cv_splits, metrics = metric_set(rmse))
+
+# Print the RMSE for each model
+cv_results_dose %>% collect_metrics()
+cv_results_all %>% collect_metrics()
+
+# Run the code again with a different seed
+set.seed(456)
+
+# Create 10-fold cross-validation splits
+cv_splits <- vfold_cv(train_data2, v = 10)
+
+# Perform cross-validation for the DOSE model
+cv_results_dose <- workflow_dose %>% 
+  fit_resamples(resamples = cv_splits, metrics = metric_set(rmse))
+
+# Perform cross-validation for the all predictors model
+cv_results_all <- workflow_all %>% 
+  fit_resamples(resamples = cv_splits, metrics = metric_set(rmse))
+
+# Print the RMSE for each model
+cv_results_dose %>% collect_metrics()
+cv_results_all %>% collect_metrics()
+
+```
+We can see that our RMSE value is 690 for our DOSE model and 645 for our all predictors model. The gap between these two is smaller than it was for our previous model evaluation without CV but the all predictors model still appears to fit better. Our second random number seed CV run gives 689 for DOSE and 630 for all predictors; this is very similar to the previous run but our all predictor model gives a slighlty stronger value.
+
+Looking at the standard error values, we can see that the standard error is lower in both RNG seeds for our all predictor models. These models seem more robust and than the DOSE models overall. We didn't bother to run CV on the null model again because it doesn't give much more information. Overall, our patterns seem the same as our initial evaluations indicated.
