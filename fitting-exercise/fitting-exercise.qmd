@@ -4,7 +4,7 @@ author: "Kevin Kosewick"
 editor: visual
 ---
 
-We will be using the dataset found [here](https://github.com/metrumresearchgroup/BayesPBPK-tutorial) and made by the nlmixr team for this exercise.  The dataset contains pharmacokinetic observations from 120 subjects who were administered IV infusions of mavoglurant. We'll begin by loading the necessary packages and the dataset.
+We will be using the dataset found [here](https://github.com/metrumresearchgroup/BayesPBPK-tutorial) and made by the nlmixr team for this exercise. The dataset contains pharmacokinetic observations from 120 subjects who were administered IV infusions of mavoglurant. We'll begin by loading the necessary packages and the dataset.
 
 ```{r}
 # Load necessary libraries
@@ -24,6 +24,7 @@ ggplot(fittingdata, aes(x = TIME, y = DV, color = DOSE, group = ID)) +
   labs(x = "Time", y = "DV", color = "Dose") +
   theme_minimal()
 ```
+
 We can see that the data records a time series measuring concentrations of DV (which stands for Dependent Variable, which is Mavoglurant). Looking at the summary, we can see that OCC has values greater than 1. We don't know what these mean so we probably shouldn't use them. We'll remove all observations with values other than 1.
 
 ```{r}
@@ -33,6 +34,7 @@ library(dplyr)
 # Filter the data
 fittingdata2 <- fittingdata %>% filter(OCC == 1)
 ```
+
 We now want to compute the sum of DV for each individual to determine the full amount of drug for each individual. I understand that according to the exercise details this is not the best approach, but this is mainly for practice anyways. I consulted Microsoft Copilot for help with this using this prompt (which is also the same as the instructions laid out in the exercise explanation): "Write code to exclude the observations with TIME = 0, then compute the sum of the DV variable for each individual using dplyr::summarize(). Call this variable Y. The result from this step should be a data frame/tibble of size 120 x 2, one column for the ID one for the variable Y. Next, create a data frame that contains only the observations where TIME == 0. This should be a tibble of size 120 x 17. Finally, use the appropriate join function to combine those two data frames, to get a data frame of size 120 x 18."
 
 ```{r}
@@ -62,6 +64,7 @@ fittingdata_final <- fittingdata_combined %>%
 summary(fittingdata_final)
 class(fittingdata_final$RACE)
 ```
+
 We'll begin a formal EDA now. We're interested in how each of the variables influences our outcome variable that we created, "Y". Again, this is the sum per individual of all of our original "DV" values. Before we begin, we should note that the documentation for this dataset is not very good. We don't know what the values in RACE or SEX indicate, so interpreting results from the EDA will be challenging for these. According to the study this is based off of, 86% of participants were male, so we can assume that a value of 1 is male and 2 is female (based off of the frequency of these values in the dataset). We'll generate plots for them regardless. First up is our AGE variable.
 
 ```{r}
@@ -79,6 +82,7 @@ ggplot(fittingdata_final, aes(x = AGE, y = Y)) +
   geom_smooth(method = "loess") +
   labs(title = "Mavoglurant Concentration by Age", x = "Age (years)", y = "Mavoglurant Concentration")
 ```
+
 Our age values seem to have a relatively normal distribution with a minimum of 18 and maximum of 50. Our scatterplot shows that mavoglurant concentrations seem to remain the same on average between individuals of different ages. The plot shows no clear correlation one way or the other. Next, we'll investigate SEX.
 
 ```{r}
@@ -87,6 +91,7 @@ ggplot(fittingdata_final, aes(x = SEX, y = Y)) +
   geom_boxplot() +
   labs(title = "Concentration by Sex", x = "Sex", y = "Mavoglurant Concentration")
 ```
+
 If we knew what our dataset's values meant or had clear documentation somewhere, we could interpret these results with certainty. Instead, all we can say is that if I'm right about 1 being male, they had higher concentrations on average than females. Given greatly unequal sample sizes and unclear documentation, we can't draw many conclusions from this.
 
 ```{r}
@@ -100,6 +105,7 @@ ggplot(fittingdata_final, aes(x = RACE, y = Y)) +
   geom_boxplot() +
   labs(title = "Concentration by Race", x = "Race", y = "Mavoglurant Concentration")
 ```
+
 We have no idea what this means since we don't have good documentation on the variables. Next, we'll look at our WT variable, which stands for weight (kg).
 
 ```{r}
@@ -114,6 +120,7 @@ ggplot(fittingdata_final, aes(x = WT, y = Y)) +
   geom_smooth(method = "loess") +
   labs(title = "Mavoglurant Concentration by Weight", x = "Weight(kg)", y = "Mavoglurant Concentration")
 ```
+
 We can see that there are more observations of low-mid weight than high weight individuals from our histogram. We can see from our scatterplot that there isn't a strong correlation between weight and concentration, but it seems like higher weights have lower concentrations on average. Now we can explore HT, which is apparently our height variable. No units were given, so this will be difficult to interpret at best.
 
 ```{r}
@@ -128,6 +135,7 @@ ggplot(fittingdata_final, aes(x = HT, y = Y)) +
   geom_smooth(method = "loess") +
   labs(title = "Mavoglurant Concentration by Height", x = "Height", y = "Mavoglurant Concentration")
 ```
+
 We can't tell much from the histogram since we don't know what unit height is in, but the data seems relatively normally distributed. It is slightly skewed to the right, but not by much. The scatterplot doesn't show a strong or clear correlation, but on average, it looks like concentration decreased as height increased. Finally, we'll look at our dose variable, which only has values of 25, 37.5, and 50.
 
 ```{r}
@@ -142,6 +150,7 @@ ggplot(fittingdata_final, aes(x = DOSE, y = Y)) +
   geom_smooth(method = "loess") +
   labs(title = "Mavoglurant Concentration by Dose", x = "Dose", y = "Mavoglurant Concentration")
 ```
+
 We see that there were far fewer 37.5 doses than the others, but according to the scatterplot, there's a clear trend of increased concentration as the dosage increases. This concludes our EDA; now, we can move into our model fitting.
 
 We will now fit a linear model to Y using the main predictor of interest, DOSE. Then, we'll fit a linear model to Y using all predictors and compare their RMSE and R-squared values. We'll be using Microsoft Copilot in Precise mode for help with the base code again.
@@ -194,11 +203,12 @@ cat("R-squared: ", model2_metrics %>% filter(.metric == "rsq") %>% pull(.estimat
 print(model1_fit)
 print(model2_fit)
 ```
+
 From our linear model that only uses DOSE as a predictor, we can see that DOSE is positively correlated with total mavoglurate concentration, which matches up with our EDA plot data. We can tell by looking at the coefficients produced by our models; positive coefficients indicate positive correlation whereas negative indicates negative.
 
 Our second model shows that dose is positively correlated again. Furthermore, age and race2/88 are both positively correlated too, but the size of the coefficients indicates that age may be a weaker correlation. Sex 2, our females, are strongly negatively correlated with mavoglurate concentration. Race7 and height seem to be very strongly negatively correlated. Finally, weight is negatively correlated, but due to the coefficient size, this doesn't seem to be a strong relationship.
 
-Our first model, which only uses DOSE as a predictor, seems to explain a bit more of the variation in the data. The R-squared value is slightly higher (by 0.003). However, the RMSE is also higher, which means that the error of Model 1 is slightly higher than that of model 2.  
+Our first model, which only uses DOSE as a predictor, seems to explain a bit more of the variation in the data. The R-squared value is slightly higher (by 0.003). However, the RMSE is also higher, which means that the error of Model 1 is slightly higher than that of model 2.
 
 Now, we'll look at how to do a logistic regression model on our data. We'll use SEX as the outcome since it's a categorical variable, even though this doesn't make sense from a science standpoint (it's just practice). We'll do the same thing: 1 model for just DOSE, and another for every predictor. Then we'll produce an ROC-AUC, which just measures performance for the classification problems at various threshold settings. We'll use Microsoft Copilot in Precise mode for the base code again.
 
@@ -255,6 +265,7 @@ print(model3_fit)
 print(model4_fit)
 
 ```
+
 The coefficients for both models are very different than they were for our linear regression model that had Y as the outcome. We can see that DOSE appears to be negatively correlated with SEX, which in our case would indicate that higher doses mean more males. DOSE is again negatively correlated in our model using every variable as a predictor. Age, weight, Race88 and Race7 are all positively correlated, which means that as these increase we're more likely to see females. Y, Race2, and height are negatively correlated.
 
 We can see that the ROC-AUC value for Model 3 (just dose as a predictor) shows similar performance of the model when predicting both male and female values. Remember that "1" is our males and "2" is our females. Model 4, on the other hand, shows a far stronger ability to accurately predict males than females. This makes sense given that we had so many more observations of males in our data.
@@ -336,6 +347,7 @@ rmsedose
 rmseall
 
 ```
+
 Our second model using every predictor has a lower RMSE. We'll now compute the RMSE of a null-model (one that would just predict the mean outcome for each observation, without using any predictor information).
 
 ```{r}
@@ -354,8 +366,7 @@ rmse_null <- predictions_null %>%
 print(paste("RMSE for the null model: ", rmse_null$.estimate))
 ```
 
-As the results show us (RMSE of 627), the best fitting model appears to be the one using all variables as predictors for Y. As to be expected, the null model that doesn't use any predictors has the highest RMSE, indicating that it's a poor fit. The model usng only DOSE as a predictor has a far lower RMSE (702 compared to 948) but it is higher than our all predictor model. 
-However, we can't be sure that this isn't due to overfitting since we're only using RMSE as our metric. We'll use cross-validation (CV) as a way to see if these results could be achieved on unseen data. We'll follow the tidymodels framework again for this code.
+As the results show us (RMSE of 627), the best fitting model appears to be the one using all variables as predictors for Y. As to be expected, the null model that doesn't use any predictors has the highest RMSE, indicating that it's a poor fit. The model usng only DOSE as a predictor has a far lower RMSE (702 compared to 948) but it is higher than our all predictor model. However, we can't be sure that this isn't due to overfitting since we're only using RMSE as our metric. We'll use cross-validation (CV) as a way to see if these results could be achieved on unseen data. We'll follow the tidymodels framework again for this code.
 
 ```{r}
 #reset the seed
@@ -395,6 +406,136 @@ cv_results_dose %>% collect_metrics()
 cv_results_all %>% collect_metrics()
 
 ```
+
 We can see that our RMSE value is 690 for our DOSE model and 645 for our all predictors model. The gap between these two is smaller than it was for our previous model evaluation without CV but the all predictors model still appears to fit better. Our second random number seed CV run gives 689 for DOSE and 630 for all predictors; this is very similar to the previous run but our all predictor model gives a slighlty stronger value.
 
-Looking at the standard error values, we can see that the standard error is lower in both RNG seeds for our all predictor models. These models seem more robust and than the DOSE models overall. We didn't bother to run CV on the null model again because it doesn't give much more information. Overall, our patterns seem the same as our initial evaluations indicated.
+Looking at the standard error values, we can see that the standard error is lower in both RNG seeds for our all predictor models. These models seem more robust and than the DOSE models overall. We didn't bother to run CV on the null model again because it doesn't give much more information. Overall, our patterns seem the same as our initial evaluations indicated.\
+\
+
+# This section added by Xueyan Hu
+
+### create a plot
+```{r}
+# Create a data frame with observed and predicted values from the three models
+predictions_df <- data.frame(
+  Observed = train_data2$Y,  # Observed values
+   Predicted_lm1 = predict(dose_fit, new_data = train_data2),
+   Predicted_lm2 = predict(all_fit, new_data = train_data2)
+  ) 
+
+# Bind the predictions from the null model to the predictions data frame
+predictions_df <- bind_cols(predictions_df, predictions_null)
+
+# rename the prediction values
+predictions_df <- predictions_df %>%
+  rename("Dose_Model" = ".pred...2",
+         "All_Model" = ".pred.1",
+         "Null_Model" = ".pred...4")
+
+# Create a scatter plot using ggplot2
+ggplot(predictions_df, aes(x = Observed)) +
+  geom_point(aes(y =  Dose_Model, color = "Dose_Model"), shape = 1) +
+  geom_point(aes(y = All_Model, color = "All_Model"), shape = 2) +
+  geom_point(aes(y = Null_Model, color = "Null_Model"), shape = 3) +
+  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed") +
+  xlim(0, 5000) + ylim(0, 5000) +  # Set axes limits
+  labs(x = "Observed", y = "Predicted") +  # Axis labels
+  theme_minimal() +  # Minimal theme
+  scale_color_manual(values = c("red", "blue", "green", "black")) +  # Color for each model
+  guides(color = guide_legend(title = "Model"))  # Legend title
+```
+Null model predictions only have mean, so it is a horizontal line.
+Since dose has 3 levels, dose model also form 3 horizontal lines.
+All predictor model seem more disperse than other 2.
+
+### residual plot
+
+```{r}
+# Calculate residuals for Model 2
+predictions_df$residuals <- predictions_df$All_Model - predictions_df$Observed
+
+# Create a scatter plot of residuals versus predicted for Model 2
+ggplot(predictions_df, aes(x = All_Model, y = residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(x = "Predicted", y = "Residuals") +
+  theme_minimal()
+```
+
+### boobstrap resampling for model 2
+```{r}
+# Set seed
+set.seed(1234)
+
+# Create 100 bootstrap samples
+boot_samples <- bootstraps(train_data2, times = 100)
+
+# Function to fit model and make predictions
+fit_model <- function(data) {
+  model <- lm(Y ~ ., data = data)
+  return(predict(model, newdata = train_data2))
+}
+
+# Fit model to each bootstrap sample and make predictions
+pred_bs <- lapply(boot_samples$splits, function(split) {
+  fit_data <- analysis(split)
+  fit_model(fit_data)
+})
+
+# Convert the list of predictions to a matrix or array
+pred_array <- do.call(cbind, pred_bs)
+
+# Compute median and confidence intervals
+preds <- pred_array |> apply(1, quantile,  c(0.055, 0.5, 0.945)) |>  t()
+
+# Plot observed values versus point estimates and confidence intervals
+observed <- train_data2$Y
+point_estimate <- preds[, 2]
+lower_ci <- preds[, 1]
+upper_ci <- preds[, 3]
+
+# Plot
+plot_data <- data.frame(
+  Observed = observed,
+  Point_Estimate = point_estimate,
+  Lower_CI = lower_ci,
+  Upper_CI = upper_ci
+)
+
+ggplot(plot_data, aes(x = Observed)) +
+  geom_point(aes(y = Point_Estimate), color = "blue", shape = 19) +
+  geom_point(aes(y = Lower_CI), color = "green", shape = 19) +
+  geom_point(aes(y = Upper_CI), color = "red", shape = 19) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "red") +
+  xlim(0, 5000) + ylim(0, 5000) +
+  labs(x = "Observed", 
+       y = "Predicted",
+       title = "Observed and Predicted Y by bootstrap resampling with confident intervals") +
+  theme_minimal() 
+```
+The red line means the predictions perfectly fit the observed outcome.
+According to the plot, the blue dots(median predicted values) align kind of closely with the dashed red line, which means the model's predictions are accurate on average. The green and red points (confidence intervals) are kind of narrow and symmetric around the blue points, which indicates high precision and confidence in the model's predictions. And I don't think there's a consistent pattern of points deviating from the dashed red line, so maybe there is no potential issues with the model's performance or uncertainty in predictions.
+
+#Exercise 10 Part 3
+
+Building off of Xueyan's contributions, we will do one final model assessment using the test data we've saved for this step. I am again using Microsoft Copilot to help generate code.
+
+```{r}
+# Compute predictions for the test data using the all predictors model
+predictions_test <- predict(all_fit, new_data = test_data2)
+
+# Create a scatter plot using ggplot2
+ggplot(predictions_df, aes(x = Observed, y = All_Model)) +
+  geom_point(color = "blue") +
+  geom_point(data = data.frame(Observed = test_data2$Y, All_Model = predictions_test$.pred), aes(x = Observed, y = All_Model), color = "red") +
+  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed") +
+  labs(x = "Observed", y = "Predicted") +
+  theme_minimal() +
+  scale_color_manual(values = c("blue", "red"), labels = c("Training", "Test")) +
+  guides(color = guide_legend(title = "Dataset"))  # Legend title
+
+```
+This seems like a good sign; the test set predictions are mixed well with the train set predictions. We appear to have avoided overfitting. 
+Ultimately, all of our models performed better than the null model, which indicates that our predictors definitely have an influence on our outcome variable of interest. The model with only dose gives better results than the null model but it is heavily biased due to the three distinct dosage levels within the variable. It doesn't perform as well on our metric of RMSE as the model with all predictors since we likely explain more variation with the other predictors involved. The dose model isn't useless, as we see that dosage certainly has an impact on our Y variable, but it doesn't give us as full of a picture as our all predictor model.
+
+Our all predictor model makes more sense biologically, as we would expect individuals of different age, sex, height, and weight to metabolize mavoglurant at a different rate. Dosage is certainly a huge factor when it comes to the final concentration in each individual, but we would expect to see different kinds of people metabolizing drugs at a different rate. Our uncertainty evaluations of the all predictor model were pretty positive overall with points generally falling around our ideal model. It doesn't seem to overfit or underfit too much, but it could likely be improved still. The residual plot indicated that we had a lot of under and over predicting, but out of the models we fit this one seems to be the best option. The model definitely seems usable for ballpark predictions of mavoglurant concentration given someone's age, sex, height, weight, and dosage level. It would likely be improved by adding more observations to the data set in order to train a model that can take more variation into account.
