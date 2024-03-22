@@ -395,6 +395,7 @@ cv_results_dose %>% collect_metrics()
 cv_results_all %>% collect_metrics()
 
 ```
+
 We can see that our RMSE value is 690 for our DOSE model and 645 for our all predictors model. The gap between these two is smaller than it was for our previous model evaluation without CV but the all predictors model still appears to fit better. Our second random number seed CV run gives 689 for DOSE and 630 for all predictors; this is very similar to the previous run but our all predictor model gives a slighlty stronger value.
 
 Looking at the standard error values, we can see that the standard error is lower in both RNG seeds for our all predictor models. These models seem more robust and than the DOSE models overall. We didn't bother to run CV on the null model again because it doesn't give much more information. Overall, our patterns seem the same as our initial evaluations indicated.
