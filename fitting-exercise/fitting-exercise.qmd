@@ -60,6 +60,10 @@ fittingdata_final <- fittingdata_combined %>%
   mutate(RACE = as.factor(RACE),
          SEX = as.factor(SEX)) %>%
   select(Y, DOSE, AGE, SEX, RACE, WT, HT)
+
+#save the cleaned data
+saveRDS(fittingdata_final, file = "modelfitting.rds")
+
 # Check data to make sure everything is good
 summary(fittingdata_final)
 class(fittingdata_final$RACE)
