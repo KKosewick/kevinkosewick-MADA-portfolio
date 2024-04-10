@@ -2,4 +2,404 @@
 title: "Tidy Tuesday Exercise"
 ---
 
-Placeholder file for the future Tidy Tuesday exercise.
+For this week's exercise, we'll be taking part in Tidy Tuesday, a data analysis initiative where a community of analysts picks a dataset to analyze and discuss weekly. This week's exercise contains information from NASA on the path of annularity and path of totality for the solar eclipse in 2023 and 2024. The annular path describes areas that will be able to see a "ring of fire" around the moon as it mostly blocks the sun. The totality path describes areas that will experience a full blocking of the sun by the moon, causing it to become dark in said region. This data includes the cities that will be in each of these paths as well as the predicted times that the eclipse will start and end for each location.
+We'll load the data now using a script published in the TidyTuesday Github repository.
+
+```{r}
+# Load the data and libraries 
+library(tidytuesdayR)
+library(ggplot2)
+library(dplyr)
+library(tidymodels)
+library(rsample)
+library(parsnip)
+library(tune)
+tuesdata <- tidytuesdayR::tt_load(2024, week = 15)
+
+eclipse_annular_2023 <- tuesdata$eclipse_annular_2023
+eclipse_total_2024 <- tuesdata$eclipse_total_2024
+eclipse_partial_2023 <- tuesdata$eclipse_partial_2023
+eclipse_partial_2024 <- tuesdata$eclipse_partial_2024
+```
+
+Let's take a look at the data.
+
+```{r}
+# Look at a quick header for each data frame
+head(eclipse_annular_2023)
+head(eclipse_partial_2023)
+head(eclipse_partial_2024)
+head(eclipse_total_2024)
+
+# Check summary of each frame
+summary(eclipse_annular_2023)
+summary(eclipse_partial_2023)
+summary(eclipse_partial_2024)
+summary(eclipse_total_2024)
+
+# Check for missing values in annular 2023
+missing_2023 <- sum(is.na(eclipse_annular_2023))
+print(paste("Number of missing values in df_2023: ", missing_2023))
+
+# Check for missing values in total 2024
+missing_2024 <- sum(is.na(eclipse_total_2024))
+print(paste("Number of missing values in df_2024: ", missing_2024))
+
+```
+The data seems to be free of missing values. For definitions of each variable, see the TidyTuesday repository and the data for 04/9/2024.
+
+Our data seems to have loaded in properly based off of the definitions given by the TidyTuesday group and our quick summaries of the objects we made. It may be useful to go into this with an idea of what questions we want to ask, so we can think of some ideas here. These can always be adjusted as we explore the data. 
+
+Here are my current ideas:
+
+Do cities differ in their eclipse starting times (eclipse_1) between the datasets we're given?
+
+Based off of the picture included in the TidyTuesday repository, San Antonio experienced both the annual and total eclipse these past two years. Are there differences between the start and end times of each eclipse in this city?
+
+Which places have the longest duration of totality this year?
+
+We can begin making some plots to answer these questions. We'll start by looking at the start times for the total and annular eclipses. However, we can see that the timestamp data is given in a format that R may find difficult to understand. We'll start by converting the time data in each dataframe to a format R can use.
+```{r}
+#Make a plot showing the different start times for the annular (2023) eclipse
+
+# Convert time column to a POSIXct object, a date-time class that R can understand
+eclipse_annular_2023$eclipse_1 <- as.POSIXct(eclipse_annular_2023$eclipse_1, format="%H:%M:%S")
+eclipse_annular_2023$eclipse_2 <- as.POSIXct(eclipse_annular_2023$eclipse_2, format="%H:%M:%S")
+eclipse_annular_2023$eclipse_3 <- as.POSIXct(eclipse_annular_2023$eclipse_3, format="%H:%M:%S")
+eclipse_annular_2023$eclipse_4 <- as.POSIXct(eclipse_annular_2023$eclipse_4, format="%H:%M:%S")
+eclipse_annular_2023$eclipse_5 <- as.POSIXct(eclipse_annular_2023$eclipse_5, format="%H:%M:%S")
+eclipse_annular_2023$eclipse_6 <- as.POSIXct(eclipse_annular_2023$eclipse_6, format="%H:%M:%S")
+
+# Create the plot
+EDAannular <- ggplot(eclipse_annular_2023, aes(x=eclipse_3, y=name)) +
+  geom_point() +
+  labs(x="Time of Annularity Start", y="City", title="Annularity Start Times in Different Cities") +
+  theme_minimal()
+
+# Print the plot
+print(EDAannular)
+
+```
+That's a bit messy.. maybe we'll start with the states instead given that we have about 800 cities to look at here.
+
+```{r}
+# Create the plot
+EDAannular2 <- ggplot(eclipse_annular_2023, aes(x=eclipse_3, y=state)) +
+  geom_point() +
+  labs(x="Time of Annularity Start", y="State", title="Annularity Start Times in Different States") +
+  theme_minimal()
+
+# Print the plot
+print(EDAannular2)
+```
+
+We can see that 8 states in the western US experienced the complete annular eclipse between 4:15 and 5 pm. Now let's see how this compares to our total eclipse data for 2024. We'll take the same steps for timestamps as we did previously.
+
+```{r}
+# Convert time column to a POSIXct object, a date-time class that R can understand
+eclipse_total_2024$eclipse_1 <- as.POSIXct(eclipse_total_2024$eclipse_1, format="%H:%M:%S")
+eclipse_total_2024$eclipse_2 <- as.POSIXct(eclipse_total_2024$eclipse_2, format="%H:%M:%S")
+eclipse_total_2024$eclipse_3 <- as.POSIXct(eclipse_total_2024$eclipse_3, format="%H:%M:%S")
+eclipse_total_2024$eclipse_4 <- as.POSIXct(eclipse_total_2024$eclipse_4, format="%H:%M:%S")
+eclipse_total_2024$eclipse_5 <- as.POSIXct(eclipse_total_2024$eclipse_5, format="%H:%M:%S")
+eclipse_total_2024$eclipse_6 <- as.POSIXct(eclipse_total_2024$eclipse_6, format="%H:%M:%S")
+
+# Create the plot
+EDAtotal <- ggplot(eclipse_total_2024, aes(x=eclipse_3, y=state)) +
+  geom_point() +
+  labs(x="Time of Totality Start", y="State", title="Totality Start Times in Different States") +
+  theme_minimal()
+
+# Print the plot
+print(EDAtotal)
+```
+
+We can see that for this eclipse, there are 14 states that experienced complete totality. The start times ranged from 6:30-7:30 pm apparently. There's a mixture of eastern and western states for this one. Now we can investigate when eclipses for each year ended.
+
+```{r}
+# Create the plot
+EDAannular3 <- ggplot(eclipse_annular_2023, aes(x=eclipse_4, y=state)) +
+  geom_point() +
+  labs(x="Time of Annularity End", y="State", title="Annularity End Times in Different States") +
+  theme_minimal()
+
+# Print the plot
+print(EDAannular3)
+
+# Create the plot
+EDAtotal2 <- ggplot(eclipse_total_2024, aes(x=eclipse_4, y=state)) +
+  geom_point() +
+  labs(x="Time of Totality End", y="State", title="Totality End Times in Different States") +
+  theme_minimal()
+
+# Print the plot
+print(EDAtotal2)
+```
+
+Both eclipses appear to have been very short in duration as the start and end times don't differ too much; however, we can see that the annular eclipse end ranged from around 4:20 to slightly after 5 pm. The total eclipse ended between around 6:35 to shortly after 7:30. Texas had the longest eclipse duration of each state; this is likely due to how large it is. 
+
+Now I think it would be interesting to compare the cities that experienced that total and annual eclipse and see if any of them got both. Based off of the map included in the TIdyTuesday repository, we expect to see San Antonio on this list.
+
+```{r}
+# Merge the two data frames by city and state
+eclipse_both <- inner_join(eclipse_annular_2023, eclipse_total_2024, by=c("name", "state"), suffix=c("_2023", "_2024"))
+
+# Check the new dataframe to see what states/cities got both eclipses
+glimpse(eclipse_both)
+
+# Create the plot
+both_eclipse_cities <- ggplot(eclipse_both) +
+  geom_point(aes(x=eclipse_3_2023, y=name), color="blue", alpha=0.5) +
+  geom_point(aes(x=eclipse_3_2024, y=name), color="red", alpha=0.5) +
+  labs(x="Time of Eclipse Start", y="City", title="Eclipse Start Times in Different Cities") +
+  theme_minimal()
+
+# Print the plot
+print(both_eclipse_cities)
+```
+
+Looking at our new dataframe with only cities that experienced both eclipses, we can see that Texas cities are the only ones included. This means that our guesses from the TidyTuesday repository were correct; Texas is the only state with cities that experienced both eclipses. The plot shows the differences in the start times between the two eclipses based on city (red is total and blue is annular); there are a lot of cities, so it's difficult to read the y-axis, but looking at the object we can see that 56 unique cities are included.
+
+We also have data on cities that experienced a partial eclipse in either year. There are 31363 cities with partial eclipses in 2023 and 28844 for 2024. We could see if there are any recurring cities on this list now.
+
+```{r}
+# Convert time column to a POSIXct object, a date-time class that R can understand. 2023 first, then 2024
+eclipse_partial_2023$eclipse_1 <- as.POSIXct(eclipse_partial_2023$eclipse_1, format="%H:%M:%S")
+eclipse_partial_2023$eclipse_2 <- as.POSIXct(eclipse_partial_2023$eclipse_2, format="%H:%M:%S")
+eclipse_partial_2023$eclipse_3 <- as.POSIXct(eclipse_partial_2023$eclipse_3, format="%H:%M:%S")
+eclipse_partial_2023$eclipse_4 <- as.POSIXct(eclipse_partial_2023$eclipse_4, format="%H:%M:%S")
+eclipse_partial_2023$eclipse_5 <- as.POSIXct(eclipse_partial_2023$eclipse_5, format="%H:%M:%S")
+
+eclipse_partial_2024$eclipse_1 <- as.POSIXct(eclipse_partial_2024$eclipse_1, format="%H:%M:%S")
+eclipse_partial_2024$eclipse_2 <- as.POSIXct(eclipse_partial_2024$eclipse_2, format="%H:%M:%S")
+eclipse_partial_2024$eclipse_3 <- as.POSIXct(eclipse_partial_2024$eclipse_3, format="%H:%M:%S")
+eclipse_partial_2024$eclipse_4 <- as.POSIXct(eclipse_partial_2024$eclipse_4, format="%H:%M:%S")
+eclipse_partial_2024$eclipse_5 <- as.POSIXct(eclipse_partial_2024$eclipse_5, format="%H:%M:%S")
+
+# Merge the two data frames by city and state
+partial_both <- inner_join(eclipse_partial_2023, eclipse_partial_2024, by=c("name", "state"), suffix=c("_2023", "_2024"))
+
+# Check the new dataframe to see what states/cities were partial both years
+glimpse(partial_both)
+
+# Create the plot
+partial_eclipse_cities <- ggplot(partial_both) +
+  geom_point(aes(x=eclipse_3_2023, y=name), color="blue", alpha=0.5) +
+  geom_point(aes(x=eclipse_3_2024, y=name), color="red", alpha=0.5) +
+  labs(x="Time of Eclipse Start", y="City", title="Eclipse Start Times in Different Cities") +
+  theme_minimal()
+
+# Print the plot
+print(partial_eclipse_cities)
+```
+
+We have a huge number of cities (285009) that experienced partial eclipses in both years. This data seems difficult to deal with and is less interesting than the total/annular eclipse regions, so we'll shift our focus away from these sets for the time being. 
+We can now try to answer the final question I posed earlier: which cities had the longest duration of annularity and which will have the longest duration of totality? We'll need to create two new columns in our dataframe that contain the total duration of each eclipse to do this.
+
+```{r}
+# Create two new columns in the dataframe with cities that experienced both eclipses
+eclipse_both$duration_2023 <- eclipse_both$eclipse_4_2023 - eclipse_both$eclipse_3_2023
+eclipse_both$duration_2024 <- eclipse_both$eclipse_4_2024 - eclipse_both$eclipse_3_2024
+
+# Plot for 2023
+ggplot(eclipse_both, aes(x=name, y=duration_2023)) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "City", y = "Duration of 2023 Eclipse", title = "Comparison of 2023 Eclipse Durations")
+
+# Plot for 2024
+ggplot(eclipse_both, aes(x=name, y=duration_2024)) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "City", y = "Duration of 2024 Eclipse", title = "Comparison of 2024 Eclipse Durations")
+
+```
+
+The duration values on the y axis are in seconds. We can see that the total eclipse seemed to be shorter overall and that cities who had a longer annular eclipse didn't always have a long total one. This graph seems to point to an interesting question we could ask: is there a correlation between city and eclipse duration in the data from these two years, or does it seem to be random which cities experience longer eclipses? Based off of the graphs we see here, I hypothesize that there's little to no correlation between eclipse duration and specific cities.
+
+From our EDA so far, we can see that Texas is the only state with cities that experience both eclipses, so it will be interesting to see if a model accurately predicts eclipse duration for them. Before we fit any models, we first need to calculate the durations of the partial eclipses and merge each frame into a new object for analysis.
+
+```{r}
+# Create new columns in each uncombined dataframe with the duration of each eclipse
+eclipse_annular_2023$duration <- eclipse_annular_2023$eclipse_4 - eclipse_annular_2023$eclipse_3
+eclipse_total_2024$duration <- eclipse_total_2024$eclipse_4 - eclipse_total_2024$eclipse_3
+eclipse_partial_2023$duration<- eclipse_partial_2023$eclipse_4 - 
+eclipse_partial_2023$eclipse_3
+eclipse_partial_2024$duration<- eclipse_partial_2024$eclipse_4 - 
+eclipse_partial_2024$eclipse_3
+
+#Create copies of each dataframe that remove the columns we don't need for our analysis. This will make it possible to merge them into one dataframe after. We'll also add a new columns that allow us to differentiate between which set the observations came from upon merging them.
+
+eclipse_total_2024_duration <- eclipse_total_2024 %>% select(name, state, duration) %>% mutate(year = 2024, eclipse_type = "total")
+eclipse_annular_2023_duration <- eclipse_annular_2023 %>% select(name, state, duration) %>% mutate(year = 2023, eclipse_type = "annular")
+eclipse_partial_2023_duration <- eclipse_partial_2023 %>% select(name, state, duration) %>% mutate(year = 2023, eclipse_type = "partial")
+eclipse_partial_2024_duration <- eclipse_partial_2024 %>% select(name, state, duration) %>% mutate(year = 2024, eclipse_type = "partial")
+
+# Combine dataframes
+duration_combined <- bind_rows(eclipse_total_2024_duration, eclipse_annular_2023_duration, eclipse_partial_2023_duration, eclipse_partial_2024_duration)
+
+#Make the duration variable numeric so it works with our model fitting functions
+duration_combined$duration <- as.numeric(duration_combined$duration)
+
+```
+
+Now we have a cleaned and merged dataset with new variables that make an analysis easy. Let's pick a new question for which we can create models to answer now that we've done an EDA. I'm thinking that it would be interesting to see if there's a correlation between eclipse duration and the type of eclipse. I think that we will observe similar durations for each type.
+
+We can now begin to fit some models to the cleaned data. We'll use train/test splits and CV wherever applicable. I consulted Microsoft Copilot in Precise Mode for advice and determined that a Linear Regression, Decision Tree model, and Random Forest model would work well for my data since I have a combination of numerical and categorical variables I want to analyze. I used Microsoft Copilot to generate the basic code and modified it according to my specifics.
+
+```{r}
+# Convert the type of eclipse to a factor
+duration_combined$eclipse_type <- as.factor(duration_combined$eclipse_type)
+
+# Split the data into training and testing sets
+set.seed(123)
+data_split <- initial_split(duration_combined, prop = 0.75)
+train_data <- training(data_split)
+test_data <- testing(data_split)
+
+# Cross-validation (5-fold)
+cv <- vfold_cv(train_data, v = 5)
+
+# Model 1: Linear Regression
+model1 <- linear_reg() %>%
+  set_engine("lm") %>%
+  set_mode("regression")
+
+# Model 2: Decision Tree
+model2 <- decision_tree() %>%
+  set_engine("rpart") %>%
+  set_mode("regression")
+
+# Model 3: Random Forest
+model3 <- rand_forest() %>%
+  set_engine("ranger") %>%
+  set_mode("regression")
+
+# Define the workflow
+workflow1 <- workflow() %>%
+  add_model(model1) %>%
+  add_formula(duration ~ eclipse_type)
+
+workflow2 <- workflow() %>%
+  add_model(model2) %>%
+  add_formula(duration ~ eclipse_type)
+
+workflow3 <- workflow() %>%
+  add_model(model3) %>%
+  add_formula(duration ~ eclipse_type)
+
+# Fit the models
+fit1 <- fit(workflow1, data = train_data)
+fit2 <- fit(workflow2, data = train_data)
+fit3 <- fit(workflow3, data = train_data)
+
+# Print the results
+fit1
+fit2
+fit3
+
+```
+The models successfuly fit; now we'll discuss the results from each before we compare the performance of each model.
+
+Linear Regression: The duration of a partial eclipse is, on average, 2154.02 seconds longer than an annular eclipse. The duration of a total eclipse is, on average, 17.72 seconds shorter than an annular eclipse.
+
+Decision Tree: The decision tree splits the data into groups based on the eclipse type. The root node represents the entire dataset, with an average duration of 2218.1060 seconds. The tree then splits the data into two groups: one for annular and total eclipses, and another for partial eclipses. The average duration for annular and total eclipses is about 189 seconds, while the average duration for partial eclipses is about 2357 seconds.
+
+Random Forest: The random forest model provides an MSE of 159581.6. The R-squared value indicates that around 63.93% of the variability in duration can be explained by the eclipse type.
+
+Now we'll evaluate each model by comparing their RMSEs, residuals, and observed vs. predicted accuracy. This will help us choose the "best" model that we can then evaluate using the test data from the split we made earlier.
+```{r}
+# Use the 'fit' objects to predict on the training data
+pred1 <- predict(fit1, new_data = train_data) %>% bind_cols(train_data)
+pred2 <- predict(fit2, new_data = train_data) %>% bind_cols(train_data)
+pred3 <- predict(fit3, new_data = train_data) %>% bind_cols(train_data)
+
+# Calculate residuals
+pred1 <- pred1 %>% mutate(residuals = .pred - duration)
+pred2 <- pred2 %>% mutate(residuals = .pred - duration)
+pred3 <- pred3 %>% mutate(residuals = .pred - duration)
+
+# Evaluate performance using RMSE and R-squared
+perf1 <- pred1 %>% metrics(truth = duration, estimate = .pred)
+perf2 <- pred2 %>% metrics(truth = duration, estimate = .pred)
+perf3 <- pred3 %>% metrics(truth = duration, estimate = .pred)
+
+# Print performance metrics
+perf1
+perf2
+perf3
+
+# Combine the predictions into one dataframe
+predictions_df <- bind_rows(
+  pred1 %>% mutate(Model = "Linear Regression"),
+  pred2 %>% mutate(Model = "Decision Tree"),
+  pred3 %>% mutate(Model = "Random Forest")
+)
+
+# Create a residuals plot using ggplot2
+ggplot(predictions_df, aes(x = duration)) +
+  geom_point(aes(y =  residuals, color = Model), shape = 1) +
+  geom_abline(slope = 0, intercept = 0, color = "black", linetype = "dashed") +
+  labs(x = "Observed", y = "Residuals") +  # Axis labels
+  theme_minimal() +  # Minimal theme
+  scale_color_manual(values = c("red", "blue", "green")) +  # Color for each model
+  guides(color = guide_legend(title = "Model"))  # Legend title
+
+# Create an observed vs predicted plot using ggplot2
+ggplot(predictions_df, aes(x = duration, y = .pred, color = Model)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed") +
+  labs(x = "Observed", y = "Predicted") +  # Axis labels
+  theme_minimal() +  # Minimal theme
+  scale_color_manual(values = c("red", "blue", "green")) +  # Color for each model
+  guides(color = guide_legend(title = "Model"))  # Legend title
+```
+
+We can see that the RMSEs, predictions, and residuals are all similar for each model. They seem to overlap heavily and split into two distinct lines on both graphs; we can assume that the small line is our total/annular eclipses and the big line is our partial eclipses. Since our metrics are all pretty close, I think it's safe to pick the simplest model (linear regression) in order to make interpretation easier.
+
+We'll now evaluate the performance of our trained model using the test data we reserved at the start of our model fitting.
+
+```{r}
+# Use the 'fit' object to predict on the test data
+pred_test <- predict(fit1, new_data = test_data) %>% bind_cols(test_data)
+
+# Calculate residuals
+pred_test <- pred_test %>% mutate(residuals = .pred - duration)
+
+# Evaluate performance using RMSE
+rmse_test <- pred_test %>% rmse(truth = duration, estimate = .pred)
+
+# Print RMSE
+print(rmse_test)
+
+# Plot residuals
+ggplot(pred_test, aes(x = .pred, y = residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
+  labs(x = "Predicted", y = "Residuals") +  # Axis labels
+  theme_minimal()  # Minimal theme
+
+# Plot observed vs predicted values
+ggplot(pred_test, aes(x = duration, y = .pred)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed") +
+  labs(x = "Observed", y = "Predicted") +  # Axis labels
+  theme_minimal()  # Minimal theme
+
+```
+
+This looks pretty solid for the total/annular eclipse observations, but the partial eclipse predictions and residuals are pretty bad. The RMSE of 390 is pretty similar to our prior models (all fell around 399), so at least we know this model can make predictions for unseen data just about as well as it did for the training data. Overall this isn't an extremely useful analysis and the model could likely be improved, but it's just for practice and to show that I can pilot a complete data analysis at this point in the class.
+
+In summary, we conducted an EDA on the TidyTuesday eclipse dataset and did some cleaning in the process. We formulated a question based off of the data: Is there a correlation between eclipse duration and the type of eclipse? Our hypothesis was that each eclipse type would have a similar duration; however, after fitting the data to several models and evaluating the "best" model on our test data, we see that the annular and total eclipses were a couple minutes shorter on average than our partial eclipses. This could have something to do with how we calculated eclipse duration. For total/annular eclipse sets, we subtracted the start of totality/annularity from the end of the eclipses. For the partial eclipse sets, we calculated duration by subtracting the peak of each eclipse from the end of the eclipse.
+
+If the definitions of a peak partial eclipse and the start of totality/annularity are different, then we could be comparing times that aren't measuring the same thing. I don't personally know the difference, but it seems to me that they'd be similar. Overall, as shown by the graph below, we can see that total/annular eclipses seem to last shorter on average than partial eclipses.
+
+```{r}
+# Create a boxplot
+ggplot(duration_combined, aes(x = eclipse_type, y = duration)) +
+  geom_boxplot() +
+  labs(x = "Type of Eclipse", y = "Duration") +  # Axis labels
+  theme_minimal()  # Minimal theme
+
+```
+
