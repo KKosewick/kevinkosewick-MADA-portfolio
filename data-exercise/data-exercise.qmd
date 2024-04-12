@@ -4,7 +4,7 @@ title: "Data Exercise"
 
 For this exercise, we will generate a synthetic data set that simulates foraging trends of the Northern Mockingbird somewhere in the United States. We will then generate some figures and statistical analyses to explore our new data set. I'll be using Microsoft Edge AI tools to help generate code. Let's begin by loading helpful packages for creating synthetic data sets.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # make sure the packages are installed
 # Load required packages
 library(dplyr)
@@ -13,6 +13,7 @@ library(lubridate)
 library(ggplot2)
 library(here)
 library(tidyverse)
+library(nnet)
 ```
 
 I've entered this prompt into Microsoft Edge copilot: 
@@ -286,8 +287,8 @@ It seems like winter doesn't have a significant impact on food consumption, but 
 A linear regression didn't work for this type of data.The above line generated an error message. After consulting with AI, a multinomial logistic regression model would work better. We'll also include sex as a predictor in this one.
 
 ```{r}
-#load the nnet package for this model
-library(nnet)
+#Using the nnet package for this model
+
 # Create a multinomial logistic regression model with season and sex as predictors for food type
 model2 <- multinom(Food_Type ~ Season + Sex, data = data)
 summary(model2)

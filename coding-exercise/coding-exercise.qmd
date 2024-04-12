@@ -4,7 +4,7 @@ title: "R Coding Exercise"
 
 Load the dslabs package. Install if you haven't. Then, inspect the gapminder dataset.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 #load dslabs package and tidyverse
 library(dslabs)
 library(tidyverse)

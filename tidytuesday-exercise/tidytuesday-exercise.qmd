@@ -5,7 +5,7 @@ title: "Tidy Tuesday Exercise"
 For this week's exercise, we'll be taking part in Tidy Tuesday, a data analysis initiative where a community of analysts picks a dataset to analyze and discuss weekly. This week's exercise contains information from NASA on the path of annularity and path of totality for the solar eclipse in 2023 and 2024. The annular path describes areas that will be able to see a "ring of fire" around the moon as it mostly blocks the sun. The totality path describes areas that will experience a full blocking of the sun by the moon, causing it to become dark in said region. This data includes the cities that will be in each of these paths as well as the predicted times that the eclipse will start and end for each location.
 We'll load the data now using a script published in the TidyTuesday Github repository.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Load the data and libraries 
 library(tidytuesdayR)
 library(ggplot2)

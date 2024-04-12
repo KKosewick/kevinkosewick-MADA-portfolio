@@ -6,9 +6,12 @@ editor: visual
 
 For this exercise, I'll be using a dataset I got from the [CDC website](https://data.cdc.gov/Health-Consequences-and-Costs/Smoking-Attributable-Mortality-Morbidity-and-Econo/ezab-8sq5/about_data) about smoking attributable expenses in the U.S. The data includes expenses per state for different categories such as hospital bills, ambulances, and prescriptions as well as overall expenses for the U.S. from 2005-2009. We'll do an exploratory data analysis and some data processing for this exercise.
 
-```{r}
-#load the dataset
+```{r, message=FALSE, warning=FALSE}
+#load the dataset and packages
+library(dplyr)
 library(here)
+library(ggplot2)
+library(car)
 smoke_expense<- read.csv(here("cdcdata-exercise", "SAE.csv"))
 #make sure data fully loaded by checking number of rows and columns. We should have 19 variables and 1560 observations
 nrow(smoke_expense)
@@ -41,9 +44,6 @@ Since there aren't any NA values and looking at the structure indicates no missi
 Using Microsoft Copilot with GPT-4 in "Precise Mode", I entered the following prompt to get the code I'm about to use: "For my exploratory analysis I want to summarize each variable in a way that can be described by a distribution. For instance, I want to be able to determine the mean and standard deviation of each expense type for 5 different states over the 4 year period recorded in the dataset. What is the best approach for this and could you provide some example code?"
 
 ```{r}
-# Load necessary libraries
-library(dplyr)
-
 # Filter for the 5 states you are interested in
 states <- c("TN", "MS", "GA", "FL", "CA")
 smoke_filtered <- smoke_expense_2 %>% filter(LocationAbbr %in% states)
@@ -82,9 +82,6 @@ Now we can create some visualizations of this information for easier interpretat
 I received this code string from it, with the only modifications I made being the proper column names and adjusting the binwidth to the square root of all of the observations:
 
 ```{r}
-# Load necessary libraries
-library(ggplot2)
-
 # Create a histogram
 ggplot(smoke_filtered, aes(x = Data_Value)) + 
   geom_histogram(binwidth = 12.25, fill = "blue", color = "black") +
@@ -99,8 +96,7 @@ ggplot(smoke_filtered, aes(x = Data_Value)) +
   theme_minimal() +
   labs(title = "Density Plot of Expenses", x = "Expense", y = "Density") 
 
-# Create a Q-Q plot
-library(car)
+# Create a Q-Q plot with the car package
 qqPlot(smoke_filtered$Data_Value, distribution = "norm", main = "Q-Q Plot of Expenses")
 
 ```
@@ -109,7 +105,7 @@ The histogram isn't very useful for much besides visualizing the numbers, but th
 
 ### This section was contributed by Emma Hardin-Parker
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # Load required packages
 library(here)
 library(dplyr)
@@ -190,7 +186,7 @@ syn_smoke_summary <- syn_smoke %>%
   )
 ```
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 # Create a histogram
 syn_hist <- ggplot(syn_smoke, aes(x = Data_Value)) + 
   geom_histogram(binwidth = 12.25, fill = "blue", color = "black") +

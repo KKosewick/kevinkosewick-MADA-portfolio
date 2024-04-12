@@ -2,14 +2,13 @@
 title: "Presentation Exercise"
 ---
 
-For this exercise, we will be recreating a figure found on the FiveThirtyEight  [website](https://fivethirtyeight.com/features/aging-congress-boomers/) about data detailing how Congress members are older on average than ever before. We'll use the ggplot package and some help from Microsoft Copilot's Precise Mode to generate the base code.
+For this exercise, we will be recreating a figure found on the FiveThirtyEight [website](https://fivethirtyeight.com/features/aging-congress-boomers/) about data detailing how Congress members are older on average than ever before. We'll use the ggplot package and some help from Microsoft Copilot's Precise Mode to generate the base code.
 
 I entered this prompt to get this first output that I modified to load the actual dataset:
 
-"I would like to use R to recreate the figure titled "The House and Senate are older than ever before
-Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023" found at this link: https://fivethirtyeight.com/features/aging-congress-boomers/. Can you give me code to reproduce that exact figure? The data is open access and available here: https://data.fivethirtyeight.com/. It is under the section "Congress Today Is Older Than It's Ever Been" from April 2, 2023." 
+"I would like to use R to recreate the figure titled"The House and Senate are older than ever before Median age of the U.S. Senate and U.S. House by Congress, 1919 to 2023" found at this link: https://fivethirtyeight.com/features/aging-congress-boomers/. Can you give me code to reproduce that exact figure? The data is open access and available here: https://data.fivethirtyeight.com/. It is under the section "Congress Today Is Older Than It's Ever Been" from April 2, 2023."
 
-I also entered this prompt for the line that adds the column "Year" to the set: "The dataset doesn't have a column for "Year", but instead records the time period in a column named "congress" which is defined as follows:  The number of the Congress that this member’s row refers to. For example, `118` indicates the member served in the 118th Congress (2023-2025). How do I go from this raw format to the one in their figure?" As well as this prompt: "Is there a way I can modify the plot to just show the average ages for each year? The variable "age_years" in the dataset doesn't do this; it only lists the age for each member in the set."
+I also entered this prompt for the line that adds the column "Year" to the set: "The dataset doesn't have a column for"Year", but instead records the time period in a column named "congress" which is defined as follows: The number of the Congress that this member's row refers to. For example, `118` indicates the member served in the 118th Congress (2023-2025). How do I go from this raw format to the one in their figure?" As well as this prompt: "Is there a way I can modify the plot to just show the average ages for each year? The variable"age_years" in the dataset doesn't do this; it only lists the age for each member in the set."
 
 Here is the AI output (made into annotations to prevent loading/error messages) after all of these prompts:
 
@@ -36,11 +35,15 @@ Here is the AI output (made into annotations to prevent loading/error messages) 
 ```
 
 And everything past here is the manually modified code:
-```{r}
+
+```{r, warning=FALSE, message=FALSE}
 #load packages
 library(ggplot2)
 library(here)
 library(dplyr)
+library(knitr)
+library(kableExtra)
+library(gt)
 
 # Replace 'path_to_file' with the path to your downloaded file
 congress <- read.csv(here("presentation-exercise", "congress-demographics", "data_aging_congress.csv"))
@@ -56,7 +59,9 @@ avg_age <- congress %>%
   summarise(avg_age_years = mean(age_years, na.rm = TRUE))
 
 ```
-Now we can create the plot: 
+
+Now we can create the plot:
+
 ```{r}
 # Plot the data
 ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
@@ -68,6 +73,7 @@ ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
        color = "Chamber") +
   theme_minimal()
 ```
+
 This is very close to the original. We'll now just modify the x and y axes to have the same increments in time as the original and change the colors of the lines. We'll also change the plot to show stepwise increments instead of lines and remove the gridlines. We'll also remove the axis labels since the original didn't have any and bold our title. Then, we'll adjust the legend position.
 
 ```{r}
@@ -90,33 +96,21 @@ ggplot(avg_age, aes(x = Year, y = avg_age_years, color = chamber)) +
         plot.title = element_text(face="bold"))
 
 ```
-This looks extremely close to the original. R is a very useful tool for creating and reproducing visualizations.
-Here's the original figure for comparison:
-![Original Figure](originalfigure.png)
 
+This looks extremely close to the original. R is a very useful tool for creating and reproducing visualizations. Here's the original figure for comparison: ![Original Figure](originalfigure.png)
 
-
-
-
-For the next part of this exercise, we'll create table with the same data shown in the plot. To begin, I gave Microsoft Copilot Precise Mode this prompt: 
-"Now I would like to make a table that displays the information shown in the plot in a visually pleasing way. You can pick the R package used. What would the code look like for this?"
+For the next part of this exercise, we'll create table with the same data shown in the plot. To begin, I gave Microsoft Copilot Precise Mode this prompt: "Now I would like to make a table that displays the information shown in the plot in a visually pleasing way. You can pick the R package used. What would the code look like for this?"
 
 ```{r}
-# Load the required package
-library(knitr)
-library(kableExtra)
 # Create the table
 kable(avg_age, caption = "Average age of the U.S. Senate and U.S. House by Congress, 1919 to 2023") %>%
   kable_styling("striped", full_width = F)
 
 ```
+
 This has too many rows and isn't very visually appealing. I'll try a different prompt: "Is there a different type of table you suggest to display a large dataset?"
 
 ```{r}
-# Load the required package
-library(dplyr)
-library(knitr)
-
 # Create a new variable for the decade
 avg_age$Decade <- 10 * floor(avg_age$Year / 10)
 
@@ -137,9 +131,6 @@ knitr::kable(summary_data, caption = "Summary of average age of the U.S. Senate 
 Much better, but it isn't very stylistically pleasing. I'll ask the AI one more prompt: "Can I stylise it to look more appealing?"
 
 ```{r}
-# Load the required package
-library(gt)
-
 # Create the table
 summary_data %>%
   gt() %>%
@@ -162,4 +153,5 @@ summary_data %>%
     table.font.size = px(12)
   )
 ```
+
 This is a pretty good table overall and much easier to digest than the first one the AI spit out. Tables don't seem to have as many options as figures when it comes to customization, but this is a good and quick way to visualize data and it gives more information than the plot did.

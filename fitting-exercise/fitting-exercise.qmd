@@ -6,11 +6,12 @@ editor: visual
 
 We will be using the dataset found [here](https://github.com/metrumresearchgroup/BayesPBPK-tutorial) and made by the nlmixr team for this exercise. The dataset contains pharmacokinetic observations from 120 subjects who were administered IV infusions of mavoglurant. We'll begin by loading the necessary packages and the dataset.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 # Load necessary libraries
 library(ggplot2)
 library(readr)
 library(here)
+library(tidymodels)
 
 # Load the data
 fittingdata <- read.csv(here("fitting-exercise","fittingdata.csv"))
@@ -72,9 +73,6 @@ class(fittingdata_final$RACE)
 We'll begin a formal EDA now. We're interested in how each of the variables influences our outcome variable that we created, "Y". Again, this is the sum per individual of all of our original "DV" values. Before we begin, we should note that the documentation for this dataset is not very good. We don't know what the values in RACE or SEX indicate, so interpreting results from the EDA will be challenging for these. According to the study this is based off of, 86% of participants were male, so we can assume that a value of 1 is male and 2 is female (based off of the frequency of these values in the dataset). We'll generate plots for them regardless. First up is our AGE variable.
 
 ```{r}
-# Load required package
-library(ggplot2)
-
 # Histogram for Age
 ggplot(fittingdata_final, aes(x = AGE)) +
   geom_histogram(binwidth = 10) +
@@ -160,9 +158,6 @@ We see that there were far fewer 37.5 doses than the others, but according to th
 We will now fit a linear model to Y using the main predictor of interest, DOSE. Then, we'll fit a linear model to Y using all predictors and compare their RMSE and R-squared values. We'll be using Microsoft Copilot in Precise mode for help with the base code again.
 
 ```{r}
-# Load necessary libraries
-library(tidymodels)
-
 # Split the data into training and testing sets
 fittingdata_split <- initial_split(fittingdata_final, prop = 0.75)
 train_data <- training(fittingdata_split)
@@ -419,6 +414,7 @@ Looking at the standard error values, we can see that the standard error is lowe
 # This section added by Xueyan Hu
 
 ### create a plot
+
 ```{r}
 # Create a data frame with observed and predicted values from the three models
 predictions_df <- data.frame(
@@ -448,9 +444,8 @@ ggplot(predictions_df, aes(x = Observed)) +
   scale_color_manual(values = c("red", "blue", "green", "black")) +  # Color for each model
   guides(color = guide_legend(title = "Model"))  # Legend title
 ```
-Null model predictions only have mean, so it is a horizontal line.
-Since dose has 3 levels, dose model also form 3 horizontal lines.
-All predictor model seem more disperse than other 2.
+
+Null model predictions only have mean, so it is a horizontal line. Since dose has 3 levels, dose model also form 3 horizontal lines. All predictor model seem more disperse than other 2.
 
 ### residual plot
 
@@ -467,6 +462,7 @@ ggplot(predictions_df, aes(x = All_Model, y = residuals)) +
 ```
 
 ### boobstrap resampling for model 2
+
 ```{r}
 # Set seed
 set.seed(1234)
@@ -517,8 +513,8 @@ ggplot(plot_data, aes(x = Observed)) +
        title = "Observed and Predicted Y by bootstrap resampling with confident intervals") +
   theme_minimal() 
 ```
-The red line means the predictions perfectly fit the observed outcome.
-According to the plot, the blue dots(median predicted values) align kind of closely with the dashed red line, which means the model's predictions are accurate on average. The green and red points (confidence intervals) are kind of narrow and symmetric around the blue points, which indicates high precision and confidence in the model's predictions. And I don't think there's a consistent pattern of points deviating from the dashed red line, so maybe there is no potential issues with the model's performance or uncertainty in predictions.
+
+The red line means the predictions perfectly fit the observed outcome. According to the plot, the blue dots(median predicted values) align kind of closely with the dashed red line, which means the model's predictions are accurate on average. The green and red points (confidence intervals) are kind of narrow and symmetric around the blue points, which indicates high precision and confidence in the model's predictions. And I don't think there's a consistent pattern of points deviating from the dashed red line, so maybe there is no potential issues with the model's performance or uncertainty in predictions.
 
 #Exercise 10 Part 3
 
@@ -539,7 +535,7 @@ ggplot(predictions_df, aes(x = Observed, y = All_Model)) +
   guides(color = guide_legend(title = "Dataset"))  # Legend title
 
 ```
-This seems like a good sign; the test set predictions are mixed well with the train set predictions. We appear to have avoided overfitting. 
-Ultimately, all of our models performed better than the null model, which indicates that our predictors definitely have an influence on our outcome variable of interest. The model with only dose gives better results than the null model but it is heavily biased due to the three distinct dosage levels within the variable. It doesn't perform as well on our metric of RMSE as the model with all predictors since we likely explain more variation with the other predictors involved. The dose model isn't useless, as we see that dosage certainly has an impact on our Y variable, but it doesn't give us as full of a picture as our all predictor model.
+
+This seems like a good sign; the test set predictions are mixed well with the train set predictions. We appear to have avoided overfitting. Ultimately, all of our models performed better than the null model, which indicates that our predictors definitely have an influence on our outcome variable of interest. The model with only dose gives better results than the null model but it is heavily biased due to the three distinct dosage levels within the variable. It doesn't perform as well on our metric of RMSE as the model with all predictors since we likely explain more variation with the other predictors involved. The dose model isn't useless, as we see that dosage certainly has an impact on our Y variable, but it doesn't give us as full of a picture as our all predictor model.
 
 Our all predictor model makes more sense biologically, as we would expect individuals of different age, sex, height, and weight to metabolize mavoglurant at a different rate. Dosage is certainly a huge factor when it comes to the final concentration in each individual, but we would expect to see different kinds of people metabolizing drugs at a different rate. Our uncertainty evaluations of the all predictor model were pretty positive overall with points generally falling around our ideal model. It doesn't seem to overfit or underfit too much, but it could likely be improved still. The residual plot indicated that we had a lot of under and over predicting, but out of the models we fit this one seems to be the best option. The model definitely seems usable for ballpark predictions of mavoglurant concentration given someone's age, sex, height, weight, and dosage level. It would likely be improved by adding more observations to the data set in order to train a model that can take more variation into account.

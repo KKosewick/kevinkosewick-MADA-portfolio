@@ -4,9 +4,9 @@ author: "Kevin Kosewick"
 editor: visual
 ---
 
-For this exercise, we'll be practicing some machine learning models using the data from our previous "Fitting exercise". Much of the base code for this exercise was generated using Microsoft Copilot in Precise Mode; this was then modified to the specifics of our data and to fix errors. We'll start by loading packages, the data, and creating a random seed for reproducibility. 
+For this exercise, we'll be practicing some machine learning models using the data from our previous "Fitting exercise". Much of the base code for this exercise was generated using Microsoft Copilot in Precise Mode; this was then modified to the specifics of our data and to fix errors. We'll start by loading packages, the data, and creating a random seed for reproducibility.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 #Load packages
 library(tidymodels)
 library(ggplot2)
@@ -44,6 +44,7 @@ mldata$RACE <- as.factor(mldata$RACE)
 #Double check to make sure everything is the class we want it
 class(mldata$RACE)
 ```
+
 Now we'll make a pairwise correlation plot for our continuous variables to make sure we don't have too much collinearity between variables.
 
 ```{r}
@@ -57,6 +58,7 @@ correlation_matrix <- cor(continuous_vars)
 corrplot(correlation_matrix, method = "circle")
 
 ```
+
 Nothing seems to correlated (absolute value of 0.9+), so we can continue with our modelling. We'll first create a new variable for Body Mass Index (BMI) using the values in our HT and WT columns.
 
 ```{r}
@@ -121,6 +123,7 @@ rf_fit <- rf_workflow %>%
 ```
 
 Now that we've fit the models, we can begin to evaluate their performance. We'll use RMSE as the metric and create some plots.
+
 ```{r}
 # Make predictions
 all_preds <- predict(all_fit, new_data = mldata)
@@ -171,6 +174,7 @@ ggplot() +
   ylab("Predicted")
 
 ```
+
 We can see that the Random Forest model performs a lot better on the RMSE metric than the other two models. The prediction points are also closer to the line on the observed vs predicted plots, indicating a better fit overall. The linear and LASSO models are very similar to each other; this is likely because we set the tuning paramter so low for our LASSO, resulting in very little change from a typical linear model.
 
 We'll now practice tuning our complex models (LASSO and RF). We'll start with LASSO. Note that this tuning is being done with the data used to train the model; this is a poor choice in a real analysis and is only being done now for practice purposes.
@@ -206,6 +210,7 @@ print(tune_results)
 # Plot the tuning results
 autoplot(tune_results)
 ```
+
 We can see that as our penalty parameter increases, the RMSE in our LASSO model also increases. Low penalty values hover at the same RMSE as our linear model; this could indicate that we have no overfitting in our model or that all predictors are relevant. However, we know that we're tuning our model with the same data we used to fit it, so these results are misleading since we aren't actually able to test our model with new data. Now we'll tune our RF model.
 
 ```{r}
@@ -237,6 +242,7 @@ print(tune_results)
 # Plot the tuning results
 autoplot(tune_results)
 ```
+
 It seems that a higher value of mtry and a lower value of min_n lead to the best results. We'll move on for now to using CV then actually tuning the data to "new" observations.
 
 ```{r}
@@ -283,7 +289,5 @@ print(tune_results_rf)
 # Plot the tuning results for Random Forest
 autoplot(tune_results_rf)
 ```
-The LASSO still does best for a small penalty, the RMSE for both models went up, and the LASSO now has lower RMSE compared to the RF. CV provides a more robust estimate of model performance by averaging the performance across multiple folds. This often results in a higher RMSE compared to a single model fit on the entire dataset. This could explain why the RMSE for both models went up when using CV.
-When the penalty is small, LASSO includes more features in the model, making it more flexible and potentially leading to lower RMSE. This could explain why LASSO still does best for a small penalty. 
-LASSO is a linear model, which may be less complex than a Random Forest depending on the number of features selected. If the true relationship is linear/nearly linear, LASSO may outperform a Random Forest, which could explain why LASSO now has a lower RMSE compared to the Random Forest.
-Based off of these findings, it would seem that the LASSO model explains more variation (higher R squared value) and has a lower RMSE, indicating better performance. I would select this as the better model for our study.
+
+The LASSO still does best for a small penalty, the RMSE for both models went up, and the LASSO now has lower RMSE compared to the RF. CV provides a more robust estimate of model performance by averaging the performance across multiple folds. This often results in a higher RMSE compared to a single model fit on the entire dataset. This could explain why the RMSE for both models went up when using CV. When the penalty is small, LASSO includes more features in the model, making it more flexible and potentially leading to lower RMSE. This could explain why LASSO still does best for a small penalty. LASSO is a linear model, which may be less complex than a Random Forest depending on the number of features selected. If the true relationship is linear/nearly linear, LASSO may outperform a Random Forest, which could explain why LASSO now has a lower RMSE compared to the Random Forest. Based off of these findings, it would seem that the LASSO model explains more variation (higher R squared value) and has a lower RMSE, indicating better performance. I would select this as the better model for our study.

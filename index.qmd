@@ -1,14 +1,12 @@
 ---
-title: "Kevin Kosewick's website and data analysis portfolio"
+title: "Kevin Kosewick's Website"
 
 ---
 
-# Hello!
+### Welcome to **my website** and _data analysis portfolio._
 
-### And welcome to **my website** and _data analysis portfolio._
-
-Here I'll be compiling my projects for my **MADA** class in the Spring 2024 semester. 
+Here I've compiled my projects for the **Modern Applied Data Analysis(MADA)** class at the University of Georgia in the Spring semester of 2024. This course is part of my PhD curriculum in Environmental Health Sciences and was a great way to learn many new skills in the field of data analysis. Some of the topics practiced include machine learning models, data visualization, synthetic data generation, exploratory and statistical analyses, and more.
 
 
-* Feel free to use the `Menu Bar` above to learn more about me and my work up to this point. Thank you for looking!
-* Last updated 1/26/2024
+* Feel free to use the `Menu Bar` above to learn more about me and my background or navigate to my different exercises from the MADA course. Thank you for looking!
+* Last updated 4/12/2024
